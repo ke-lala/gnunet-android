@@ -1,0 +1,3 @@
+/home/user/AndroidStudioProjects/GNUnet/app/.cxx/Debug/594k1l4c/arm64-v8a/CMakeFiles/native-lib.dir
+/home/user/AndroidStudioProjects/GNUnet/app/.cxx/Debug/594k1l4c/arm64-v8a/CMakeFiles/edit_cache.dir
+/home/user/AndroidStudioProjects/GNUnet/app/.cxx/Debug/594k1l4c/arm64-v8a/CMakeFiles/rebuild_cache.dir

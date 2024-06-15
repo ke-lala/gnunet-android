@@ -1,0 +1,6 @@
+# ninja log v5
+753	781	1718266391988000000	/home/user/AndroidStudioProjects/GNUnet/app/build/intermediates/cxx/Debug/594k1l4c/obj/arm64-v8a/libnative-lib.so	45589ded28cd5c63
+0	751	1718266391956000000	CMakeFiles/native-lib.dir/native-lib.cpp.o	249f629e2478b356
+4	734	1718390199033000000	CMakeFiles/native-lib.dir/native-lib.cpp.o	69d736eff21a5683
+2	527	1718451198793000000	CMakeFiles/native-lib.dir/native-lib.cpp.o	69d736eff21a5683
+527	567	1718451198834000000	/home/user/AndroidStudioProjects/GNUnet/app/build/intermediates/cxx/Debug/594k1l4c/obj/arm64-v8a/libnative-lib.so	e32c83efea312dff

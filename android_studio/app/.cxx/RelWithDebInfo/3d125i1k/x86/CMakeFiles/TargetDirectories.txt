@@ -1,0 +1,3 @@
+/home/user/AndroidStudioProjects/GNUnet/app/.cxx/RelWithDebInfo/3d125i1k/x86/CMakeFiles/gnunet.dir
+/home/user/AndroidStudioProjects/GNUnet/app/.cxx/RelWithDebInfo/3d125i1k/x86/CMakeFiles/edit_cache.dir
+/home/user/AndroidStudioProjects/GNUnet/app/.cxx/RelWithDebInfo/3d125i1k/x86/CMakeFiles/rebuild_cache.dir
