@@ -61,11 +61,11 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 # System.loadLibrary() and pass the name of the library defined here;
 # for GameActivity/NativeActivity derived applications, the same library name must be
 # used in the AndroidManifest.xml file.
-add_library(native-lib SHARED
+add_library(gnunet SHARED
         # List C/C++ source files with relative paths to this CMakeLists.txt.
         native-lib.cpp)
 
-target_include_directories(native-lib PRIVATE
+target_include_directories(gnunet PRIVATE
         ${distribution_DIR}/libsodium/lib/${ANDROID_ABI}/include
         ${distribution_DIR}/libgcrypt/lib/${ANDROID_ABI}/include
         ${distribution_DIR}/libgpg-error/lib/${ANDROID_ABI}/include
@@ -80,7 +80,7 @@ target_include_directories(native-lib PRIVATE
 # Specifies libraries CMake should link to your target library. You
 # can link libraries from various origins, such as libraries defined in this
 # build script, prebuilt third-party libraries, or Android system libraries.
-target_link_libraries(native-lib
+target_link_libraries(gnunet
         # List libraries link to the target library
         android
         libgpg-error
