@@ -38,6 +38,9 @@ set_target_properties(libz PROPERTIES IMPORTED_LOCATION
 add_library(libiconv SHARED IMPORTED)
 set_target_properties(libiconv PROPERTIES IMPORTED_LOCATION
         ${distribution_DIR}/libiconv/lib/${ANDROID_ABI}/libiconv.so)
+add_library(libintl SHARED IMPORTED)
+set_target_properties(libintl PROPERTIES IMPORTED_LOCATION
+        ${distribution_DIR}/libintl/lib/${ANDROID_ABI}/libintl.so)
 add_library(libgettext SHARED IMPORTED)
 set_target_properties(libgettext PROPERTIES IMPORTED_LOCATION
         ${distribution_DIR}/gettext/lib/${ANDROID_ABI}/libgettextlib-0.22.5.so)
@@ -74,6 +77,7 @@ target_include_directories(gnunet PRIVATE
         ${distribution_DIR}/libz/lib/${ANDROID_ABI}/include
         ${distribution_DIR}/libtool/lib/${ANDROID_ABI}/include
         ${distribution_DIR}/libiconv/lib/${ANDROID_ABI}/include
+        ${distribution_DIR}/libintl/lib/${ANDROID_ABI}/include
         ${distribution_DIR}/gettext/lib/${ANDROID_ABI}/include
         ${distribution_DIR}/libgnunetutil/lib/${ANDROID_ABI}/include)
 
@@ -91,6 +95,7 @@ target_link_libraries(gnunet
         libunistring
         libz
         libiconv
+        libintl
         libgettext
         libgnunetutil
         log)
