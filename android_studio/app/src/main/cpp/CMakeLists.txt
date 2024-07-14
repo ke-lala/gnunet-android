@@ -66,7 +66,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 # used in the AndroidManifest.xml file.
 add_library(gnunet SHARED
         # List C/C++ source files with relative paths to this CMakeLists.txt.
-        native-lib.cpp)
+        native-lib.cpp
+)
 
 target_include_directories(gnunet PRIVATE
         ${distribution_DIR}/libsodium/lib/${ANDROID_ABI}/include
