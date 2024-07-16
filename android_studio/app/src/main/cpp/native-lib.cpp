@@ -84,13 +84,19 @@ Java_org_gnu_gnunet_MainActivity_stringFromJNI(
             "8081",
             NULL
     };
+
+
+    static const struct GNUNET_GETOPT_CommandLineOption options[] = {
+            GNUNET_GETOPT_OPTION_END
+    };
+
     std::string tmp_file = GNUNET_DISK_mktemp ("test");
     LOGD ("Temp file is here: %s", tmp_file.c_str());
     GNUNET_PROGRAM_run (1,
                         argvx,
                         "native-lib",
                         "native-lib",
-                        NULL,
+                        options,
                         &run,
                         NULL);
     std::string hello = "Hello from C++. Temp file is here: " + tmp_file;
