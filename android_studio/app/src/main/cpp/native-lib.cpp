@@ -1,6 +1,9 @@
 #include <jni.h>
 #include <string>
 #include <android/log.h>
+#include <android/asset_manager.h>
+#include <android/asset_manager_jni.h>
+#include "gnunet_arm_service.h"
 
 #define TAG "MY_TAG"
 
@@ -14,6 +17,7 @@ extern "C" {
     #include <gnunet_util_lib.h>
 }
 
+/** Milestone 6-7 code.
 static void
 run (void *cls,
      char *const *args,
@@ -72,13 +76,128 @@ run (void *cls,
 
 shutdown:
     GNUNET_SCHEDULER_shutdown();
+}*/
+
+static jobject android_java_asset_manager = NULL;
+static struct GNUNET_ARM_Handle *h;
+static struct GNUNET_CONFIGURATION_Handle *cfg;
+static struct GNUNET_ARM_Operation *op;
+
+
+static void
+start_callback (void *cls,
+                enum GNUNET_ARM_RequestStatus rs,
+                enum GNUNET_ARM_Result result)
+{
+    (void) cls;
+    op = NULL;
+    if (GNUNET_ARM_REQUEST_SENT_OK != rs)
+    {
+        LOGE("Failed to start the ARM service.");
+        GNUNET_SCHEDULER_shutdown ();
+        return;
+    }
+    if ((GNUNET_ARM_RESULT_STARTING != result) &&
+        (GNUNET_ARM_RESULT_IS_STARTED_ALREADY != result))
+    {
+        LOGE("Failed to start the ARM service.");
+        GNUNET_SCHEDULER_shutdown ();
+        return;
+    }
+    LOGD ("ARM service [re]start successful");
+}
+
+
+static void
+shutdown_task (void *cls)
+{
+    (void) cls;
+    if (NULL != op)
+    {
+        GNUNET_ARM_operation_cancel (op);
+        op = NULL;
+    }
+    if (NULL != h)
+    {
+        GNUNET_ARM_disconnect (h);
+        h = NULL;
+    }
+    GNUNET_CONFIGURATION_destroy (cfg);
+    cfg = NULL;
+}
+
+
+/**
+ * Function called whenever we connect to or disconnect from ARM.
+ * Termiantes the process if we fail to connect to the service on
+ * our first attempt.
+ *
+ * @param cls closure
+ * @param connected #GNUNET_YES if connected, #GNUNET_NO if disconnected,
+ *                  #GNUNET_SYSERR on error.
+ */
+static void
+conn_status (void *cls,
+             enum GNUNET_GenericReturnValue connected)
+{
+    static int once;
+
+    (void) cls;
+    if ( (GNUNET_SYSERR == connected) &&
+         (0 == once) )
+    {
+        LOGE("Fatal error initializing ARM API.");
+        GNUNET_SCHEDULER_shutdown ();
+        return;
+    }
+    once = 1;
+}
+
+
+static void
+run (void *cls,
+     char *const *args,
+     const char *cfgfile,
+     const struct GNUNET_CONFIGURATION_Handle *c)
+{
+    cfg =  GNUNET_CONFIGURATION_dup (c);
+    AAssetManager *mgr = static_cast<AAssetManager *>(cls);
+    AAsset *asset = AAssetManager_open(mgr, "gnunet.conf", AASSET_MODE_BUFFER);
+    char buf[AAsset_getLength(asset)];
+
+    AAsset_read(asset, buf, AAsset_getLength(asset));
+
+    if (GNUNET_OK != GNUNET_CONFIGURATION_deserialize (cfg, buf, strlen(buf), NULL))
+    {
+        LOGE ("Deserialization of configuration failed!");
+    }
+
+    AAsset_close(asset);
+
+    if (NULL == (h = GNUNET_ARM_connect (cfg,
+                                         &conn_status,
+                                         NULL)))
+        return;
+
+    op = GNUNET_ARM_request_service_start (h,
+                                           "arm",
+                                           GNUNET_OS_INHERIT_STD_NONE,
+                                           &start_callback,
+                                           NULL);
+
 }
 
 
 extern "C" JNIEXPORT jstring JNICALL
 Java_org_gnu_gnunet_MainActivity_stringFromJNI(
         JNIEnv* env,
-        jobject /* this */) {
+        jobject /* this */,
+        jobject assets) {
+
+
+    android_java_asset_manager = (*env).NewGlobalRef(assets);
+    AAssetManager *mgr = AAssetManager_fromJava(env, android_java_asset_manager);
+
     char *const argvx[] = {
             "server",
             "8081",
@@ -98,7 +217,8 @@ Java_org_gnu_gnunet_MainActivity_stringFromJNI(
                         "native-lib",
                         options,
                         &run,
-                        NULL);
+                        mgr);
     std::string hello = "Hello from C++. Temp file is here: " + tmp_file;
+
     return env->NewStringUTF(hello.c_str());
 }

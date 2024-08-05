@@ -1,7 +1,0 @@
-[
-{
-  "directory": "/home/user/AndroidStudioProjects/GNUnet/app/.cxx/Debug/594k1l4c/x86_64",
-  "command": "/home/user/Android/Sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++ --target=x86_64-none-linux-android31 --sysroot=/home/user/Android/Sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/linux-x86_64/sysroot -Dnative_lib_EXPORTS -I/home/user/AndroidStudioProjects/GNUnet/app/src/main/cpp/../../../../distribution/libsodium/lib/x86_64/include -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC -o CMakeFiles/native-lib.dir/native-lib.cpp.o -c /home/user/AndroidStudioProjects/GNUnet/app/src/main/cpp/native-lib.cpp",
-  "file": "/home/user/AndroidStudioProjects/GNUnet/app/src/main/cpp/native-lib.cpp"
-}
-]
