@@ -14,6 +14,9 @@ project("gnunet")
 # configure import libs
 set(distribution_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../../../distribution)
 
+add_library(sqliteX SHARED IMPORTED)
+set_target_properties(sqliteX PROPERTIES IMPORTED_LOCATION
+        ${distribution_DIR}/sqlite/lib/${ANDROID_ABI}/libsqliteX.so)
 add_library(libgnunetstatistics SHARED IMPORTED)
 set_target_properties(libgnunetstatistics PROPERTIES IMPORTED_LOCATION
         ${distribution_DIR}/libgnunetstatistics/lib/${ANDROID_ABI}/libgnunetstatistics.so)
@@ -97,6 +100,7 @@ add_library(gnunet SHARED
 )
 
 target_include_directories(gnunet PRIVATE
+        ${distribution_DIR}/sqlite/lib/${ANDROID_ABI}/include
         ${distribution_DIR}/libsodium/lib/${ANDROID_ABI}/include
         ${distribution_DIR}/libgcrypt/lib/${ANDROID_ABI}/include
         ${distribution_DIR}/libgpg-error/lib/${ANDROID_ABI}/include
@@ -135,6 +139,7 @@ target_link_libraries(gnunet
         libintl
         libgettext
         libgnunetutil
+        sqliteX
         libgnunetstatistics
         libgnunettransportcore
         libgnunettransportcommunicator
@@ -145,3 +150,5 @@ target_link_libraries(gnunet
         libgnunethello
         libgnunetsq
         log)
+
+target_link_options(${CMAKE_PROJECT_NAME} PRIVATE "-Wl,-z,max-page-size=16384")
