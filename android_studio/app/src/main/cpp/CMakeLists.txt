@@ -14,36 +14,21 @@ project("gnunet")
 # configure import libs
 set(distribution_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../../../distribution)
 
+add_library(libidn SHARED IMPORTED)
+set_target_properties(libidn PROPERTIES IMPORTED_LOCATION
+        ${distribution_DIR}/libidn/lib/${ANDROID_ABI}/libidn.so)
 add_library(sqliteX SHARED IMPORTED)
 set_target_properties(sqliteX PROPERTIES IMPORTED_LOCATION
         ${distribution_DIR}/sqlite/lib/${ANDROID_ABI}/libsqliteX.so)
-add_library(libgnunetstatistics SHARED IMPORTED)
-set_target_properties(libgnunetstatistics PROPERTIES IMPORTED_LOCATION
-        ${distribution_DIR}/libgnunetstatistics/lib/${ANDROID_ABI}/libgnunetstatistics.so)
-add_library(libgnunettransportcore SHARED IMPORTED)
-set_target_properties(libgnunettransportcore PROPERTIES IMPORTED_LOCATION
-        ${distribution_DIR}/libgnunettransportcore/lib/${ANDROID_ABI}/libgnunettransportcore.so)
-add_library(libgnunettransportcommunicator SHARED IMPORTED)
-set_target_properties(libgnunettransportcommunicator PROPERTIES IMPORTED_LOCATION
-        ${distribution_DIR}/libgnunettransportcommunicator/lib/${ANDROID_ABI}/libgnunettransportcommunicator.so)
-add_library(libgnunettransportapplication SHARED IMPORTED)
-set_target_properties(libgnunettransportapplication PROPERTIES IMPORTED_LOCATION
-        ${distribution_DIR}/libgnunettransportapplication/lib/${ANDROID_ABI}/libgnunettransportapplication.so)
-add_library(libgnunettransportmonitor SHARED IMPORTED)
-set_target_properties(libgnunettransportmonitor PROPERTIES IMPORTED_LOCATION
-        ${distribution_DIR}/libgnunettransportmonitor/lib/${ANDROID_ABI}/libgnunettransportmonitor.so)
-add_library(libgnunetpeerstore SHARED IMPORTED)
-set_target_properties(libgnunetpeerstore PROPERTIES IMPORTED_LOCATION
-        ${distribution_DIR}/libgnunetpeerstore/lib/${ANDROID_ABI}/libgnunetpeerstore.so)
-add_library(libgnunetarm SHARED IMPORTED)
-set_target_properties(libgnunetarm PROPERTIES IMPORTED_LOCATION
-        ${distribution_DIR}/libgnunetarm/lib/${ANDROID_ABI}/libgnunetarm.so)
+add_library(libgnunetutil SHARED IMPORTED)
+set_target_properties(libgnunetutil PROPERTIES IMPORTED_LOCATION
+        ${distribution_DIR}/libgnunetutil/lib/${ANDROID_ABI}/libgnunetutil.so)
 add_library(libgnunethello SHARED IMPORTED)
 set_target_properties(libgnunethello PROPERTIES IMPORTED_LOCATION
         ${distribution_DIR}/libgnunethello/lib/${ANDROID_ABI}/libgnunethello.so)
-add_library(libgnunetsq SHARED IMPORTED)
-set_target_properties(libgnunetsq PROPERTIES IMPORTED_LOCATION
-        ${distribution_DIR}/libgnunetsq/lib/${ANDROID_ABI}/libgnunetsq.so)
+add_library(libgnunet SHARED IMPORTED)
+set_target_properties(libgnunet PROPERTIES IMPORTED_LOCATION
+        ${distribution_DIR}/libgnunet/lib/${ANDROID_ABI}/libgnunet.so)
 add_library(libgpg-error SHARED IMPORTED)
 set_target_properties(libgpg-error PROPERTIES IMPORTED_LOCATION
         ${distribution_DIR}/libgpg-error/lib/${ANDROID_ABI}/libgpg-error.so)
@@ -74,9 +59,6 @@ set_target_properties(libintl PROPERTIES IMPORTED_LOCATION
 add_library(libgettext SHARED IMPORTED)
 set_target_properties(libgettext PROPERTIES IMPORTED_LOCATION
         ${distribution_DIR}/gettext/lib/${ANDROID_ABI}/libgettextlib-0.22.5.so)
-add_library(libgnunetutil SHARED IMPORTED)
-set_target_properties(libgnunetutil PROPERTIES IMPORTED_LOCATION
-        ${distribution_DIR}/libgnunetutil/lib/${ANDROID_ABI}/libgnunetutil.so)
 
 # build application's shared lib
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
@@ -100,6 +82,7 @@ add_library(gnunet SHARED
 )
 
 target_include_directories(gnunet PRIVATE
+        ${distribution_DIR}/libidn/lib/${ANDROID_ABI}/include
         ${distribution_DIR}/sqlite/lib/${ANDROID_ABI}/include
         ${distribution_DIR}/libsodium/lib/${ANDROID_ABI}/include
         ${distribution_DIR}/libgcrypt/lib/${ANDROID_ABI}/include
@@ -112,15 +95,8 @@ target_include_directories(gnunet PRIVATE
         ${distribution_DIR}/libintl/lib/${ANDROID_ABI}/include
         ${distribution_DIR}/gettext/lib/${ANDROID_ABI}/include
         ${distribution_DIR}/libgnunetutil/lib/${ANDROID_ABI}/include
-        ${distribution_DIR}/libgnunetstatistics/lib/${ANDROID_ABI}/include
-        ${distribution_DIR}/libgnunettransportcore/lib/${ANDROID_ABI}/include
-        ${distribution_DIR}/libgnunettransportcommunicator/lib/${ANDROID_ABI}/include
-        ${distribution_DIR}/libgnunettransportapplication/lib/${ANDROID_ABI}/include
-        ${distribution_DIR}/libgnunettransportmonitor/lib/${ANDROID_ABI}/include
-        ${distribution_DIR}/libgnunetpeerstore/lib/${ANDROID_ABI}/include
-        ${distribution_DIR}/libgnunetarm/lib/${ANDROID_ABI}/include
-        ${distribution_DIR}/libgnunethello/lib/${ANDROID_ABI}/include
-        ${distribution_DIR}/libgnunetsq/lib/${ANDROID_ABI}/include)
+        ${distribution_DIR}/libgnunet/lib/${ANDROID_ABI}/include
+        ${distribution_DIR}/libgnunethello/lib/${ANDROID_ABI}/include)
 
 # Specifies libraries CMake should link to your target library. You
 # can link libraries from various origins, such as libraries defined in this
@@ -132,6 +108,7 @@ target_link_libraries(gnunet
         libgcrypt
         libsodium
         libtool
+        libidn
         gmp
         libunistring
         libz
@@ -139,16 +116,9 @@ target_link_libraries(gnunet
         libintl
         libgettext
         libgnunetutil
-        sqliteX
-        libgnunetstatistics
-        libgnunettransportcore
-        libgnunettransportcommunicator
-        libgnunettransportapplication
-        libgnunettransportmonitor
-        libgnunetpeerstore
-        libgnunetarm
         libgnunethello
-        libgnunetsq
+        libgnunet
+        sqliteX
         log)
 
 target_link_options(${CMAKE_PROJECT_NAME} PRIVATE "-Wl,-z,max-page-size=16384")

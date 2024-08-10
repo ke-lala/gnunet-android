@@ -28,6 +28,7 @@ class MainActivity : AppCompatActivity() {
     companion object {
         // Used to load the 'gnunet' library on application startup.
         init {
+            System.loadLibrary("sqliteX");
             System.loadLibrary("gnunet")
         }
     }

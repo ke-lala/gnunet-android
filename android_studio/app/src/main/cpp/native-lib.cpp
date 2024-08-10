@@ -17,7 +17,43 @@ extern "C" {
     #include <gnunet_util_lib.h>
 }
 
-/** Milestone 6-7 code.
+static int pfd[2];
+static pthread_t thr;
+static const char *tag = "GNUNET";
+
+void *thread_func(void*)
+{
+    ssize_t rdsz;
+    char buf[128];
+    while((rdsz = read(pfd[0], buf, sizeof buf - 1)) > 0) {
+        if(buf[rdsz - 1] == '\n') --rdsz;
+        buf[rdsz] = 0;  /* add null-terminator */
+        __android_log_write(ANDROID_LOG_DEBUG, tag, buf);
+    }
+    return 0;
+}
+
+int start_logger(const char *app_name)
+{
+    tag = app_name;
+
+    /* make stdout line-buffered and stderr unbuffered */
+    setvbuf(stdout, 0, _IOLBF, 0);
+    setvbuf(stderr, 0, _IONBF, 0);
+
+    /* create the pipe and redirect stdout and stderr */
+    pipe(pfd);
+    dup2(pfd[1], 1);
+    dup2(pfd[1], 2);
+
+    /* spawn the logging thread */
+    if(pthread_create(&thr, 0, thread_func, 0) == -1)
+        return -1;
+    pthread_detach(thr);
+    return 0;
+}
+
+/** ------------------ Milestone 6-7 code. -------------------------------
 static void
 run (void *cls,
      char *const *args,
@@ -77,6 +113,8 @@ run (void *cls,
 shutdown:
     GNUNET_SCHEDULER_shutdown();
 }*/
+
+// END ------------------------------ Milestone 6 - 7 Code ---------------------
 
 static jobject android_java_asset_manager = NULL;
 static struct GNUNET_ARM_Handle *h;
@@ -153,6 +191,7 @@ conn_status (void *cls,
     once = 1;
 }
 
+/* -------------- Multi library code -----------------------------
 
 static void
 run (void *cls,
@@ -160,6 +199,10 @@ run (void *cls,
      const char *cfgfile,
      const struct GNUNET_CONFIGURATION_Handle *c)
 {
+    start_logger(tag);
+    printf("Some message.\n");
+    GNUNET_log (GNUNET_ERROR_TYPE_ERROR,
+                "Simulate error message. We do not no what is the actual log level.\n");
     cfg =  GNUNET_CONFIGURATION_dup (c);
     AAssetManager *mgr = static_cast<AAssetManager *>(cls);
     AAsset *asset = AAssetManager_open(mgr, "gnunet.conf", AASSET_MODE_BUFFER);
@@ -174,6 +217,7 @@ run (void *cls,
 
     AAsset_close(asset);
 
+
     if (NULL == (h = GNUNET_ARM_connect (cfg,
                                          &conn_status,
                                          NULL)))
@@ -185,8 +229,9 @@ run (void *cls,
                                            &start_callback,
                                            NULL);
 
-}
 
+}
+ END -------------- Multi library code ----------------------------- */
 
 extern "C" JNIEXPORT jstring JNICALL
 Java_org_gnu_gnunet_MainActivity_stringFromJNI(
@@ -199,8 +244,10 @@ Java_org_gnu_gnunet_MainActivity_stringFromJNI(
     AAssetManager *mgr = AAssetManager_fromJava(env, android_java_asset_manager);
 
     char *const argvx[] = {
-            "server",
-            "8081",
+            "-L",
+            "DEBUG",
+            "-l",
+            "test.out",
             NULL
     };
 
@@ -211,13 +258,35 @@ Java_org_gnu_gnunet_MainActivity_stringFromJNI(
 
     std::string tmp_file = GNUNET_DISK_mktemp ("test");
     LOGD ("Temp file is here: %s", tmp_file.c_str());
-    GNUNET_PROGRAM_run (1,
+
+    start_logger(tag);
+    printf("Some message.\n");
+    GNUNET_log (GNUNET_ERROR_TYPE_ERROR,
+                "Simulate error message. We do not no what is the actual log level.\n");
+    cfg = GNUNET_CONFIGURATION_create ();
+    AAsset *asset = AAssetManager_open(mgr, "gnunet.conf", AASSET_MODE_BUFFER);Are ther
+    char buf[AAsset_getLength(asset)];
+
+    AAsset_read(asset, buf, AAsset_getLength(asset));
+
+    if (GNUNET_OK != GNUNET_CONFIGURATION_deserialize (cfg, buf, strlen(buf), NULL))
+    {
+        LOGE ("Deserialization of configuration failed!");
+    }
+
+    AAsset_close(asset);
+
+    GNUNET_SERVICE_main (4,
+                        argvx,
+                        cfg);
+
+    /*GNUNET_PROGRAM_run (4,
                         argvx,
                         "native-lib",
                         "native-lib",
                         options,
                         &run,
-                        mgr);
+                        mgr);*/
     std::string hello = "Hello from C++. Temp file is here: " + tmp_file;
 
     return env->NewStringUTF(hello.c_str());
