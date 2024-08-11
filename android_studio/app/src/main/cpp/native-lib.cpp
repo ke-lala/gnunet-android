@@ -3,7 +3,7 @@
 #include <android/log.h>
 #include <android/asset_manager.h>
 #include <android/asset_manager_jni.h>
-#include "gnunet_arm_service.h"
+#include "gnunet_util_lib.h"
 
 #define TAG "MY_TAG"
 
@@ -121,8 +121,8 @@ static struct GNUNET_ARM_Handle *h;
 static struct GNUNET_CONFIGURATION_Handle *cfg;
 static struct GNUNET_ARM_Operation *op;
 
-
-static void
+/* -------------- Multi library code -----------------------------
+/*static void
 start_callback (void *cls,
                 enum GNUNET_ARM_RequestStatus rs,
                 enum GNUNET_ARM_Result result)
@@ -162,7 +162,7 @@ shutdown_task (void *cls)
     }
     GNUNET_CONFIGURATION_destroy (cfg);
     cfg = NULL;
-}
+}*/
 
 
 /**
@@ -174,7 +174,7 @@ shutdown_task (void *cls)
  * @param connected #GNUNET_YES if connected, #GNUNET_NO if disconnected,
  *                  #GNUNET_SYSERR on error.
  */
-static void
+/*static void
 conn_status (void *cls,
              enum GNUNET_GenericReturnValue connected)
 {
@@ -191,7 +191,7 @@ conn_status (void *cls,
     once = 1;
 }
 
-/* -------------- Multi library code -----------------------------
+
 
 static void
 run (void *cls,
@@ -264,7 +264,7 @@ Java_org_gnu_gnunet_MainActivity_stringFromJNI(
     GNUNET_log (GNUNET_ERROR_TYPE_ERROR,
                 "Simulate error message. We do not no what is the actual log level.\n");
     cfg = GNUNET_CONFIGURATION_create ();
-    AAsset *asset = AAssetManager_open(mgr, "gnunet.conf", AASSET_MODE_BUFFER);Are ther
+    AAsset *asset = AAssetManager_open(mgr, "gnunet.conf", AASSET_MODE_BUFFER);
     char buf[AAsset_getLength(asset)];
 
     AAsset_read(asset, buf, AAsset_getLength(asset));
