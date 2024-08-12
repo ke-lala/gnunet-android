@@ -23,6 +23,9 @@ set_target_properties(sqliteX PROPERTIES IMPORTED_LOCATION
 add_library(libgnunetutil SHARED IMPORTED)
 set_target_properties(libgnunetutil PROPERTIES IMPORTED_LOCATION
         ${distribution_DIR}/libgnunetutil/lib/${ANDROID_ABI}/libgnunetutil.so)
+add_library(libgnunet_plugin_peerstore_sqlite SHARED IMPORTED)
+set_target_properties(libgnunet_plugin_peerstore_sqlite PROPERTIES IMPORTED_LOCATION
+        ${distribution_DIR}/libgnunet_plugin_peerstore_sqlite/lib/${ANDROID_ABI}/libgnunet_plugin_peerstore_sqlite.so)
 add_library(libgnunethello SHARED IMPORTED)
 set_target_properties(libgnunethello PROPERTIES IMPORTED_LOCATION
         ${distribution_DIR}/libgnunethello/lib/${ANDROID_ABI}/libgnunethello.so)
@@ -96,7 +99,8 @@ target_include_directories(gnunetti PRIVATE
         ${distribution_DIR}/gettext/lib/${ANDROID_ABI}/include
         ${distribution_DIR}/libgnunetutil/lib/${ANDROID_ABI}/include
         ${distribution_DIR}/libgnunet/lib/${ANDROID_ABI}/include
-        ${distribution_DIR}/libgnunethello/lib/${ANDROID_ABI}/include)
+        ${distribution_DIR}/libgnunethello/lib/${ANDROID_ABI}/include
+        ${distribution_DIR}/libgnunet_plugin_peerstore_sqlite/lib/${ANDROID_ABI}/include)
 
 # Specifies libraries CMake should link to your target library. You
 # can link libraries from various origins, such as libraries defined in this
@@ -117,6 +121,7 @@ target_link_libraries(gnunetti
         libgettext
         libgnunetutil
         libgnunethello
+        libgnunet_plugin_peerstore_sqlite
         libgnunet
         sqliteX
         log)
