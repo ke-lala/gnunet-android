@@ -5,7 +5,7 @@
 #include <android/asset_manager_jni.h>
 #include "gnunet_util_lib.h"
 
-#define TAG "MY_TAG"
+#define TAG "GNUNET"
 
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR,    TAG, __VA_ARGS__)
 #define LOGW(...) __android_log_print(ANDROID_LOG_WARN,     TAG, __VA_ARGS__)
@@ -243,11 +243,16 @@ Java_org_gnu_gnunet_MainActivity_stringFromJNI(
     android_java_asset_manager = (*env).NewGlobalRef(assets);
     AAssetManager *mgr = AAssetManager_fromJava(env, android_java_asset_manager);
 
+    std::string tmp_file = GNUNET_DISK_mktemp ("test");
+    LOGD ("Temp file is here: %s", tmp_file.c_str());
+
+    char *const non_const_ptr = const_cast<char*>(tmp_file.c_str());
+
     char *const argvx[] = {
             "-L",
             "DEBUG",
             "-l",
-            "test.out",
+            non_const_ptr,
             NULL
     };
 
@@ -255,9 +260,6 @@ Java_org_gnu_gnunet_MainActivity_stringFromJNI(
     static const struct GNUNET_GETOPT_CommandLineOption options[] = {
             GNUNET_GETOPT_OPTION_END
     };
-
-    std::string tmp_file = GNUNET_DISK_mktemp ("test");
-    LOGD ("Temp file is here: %s", tmp_file.c_str());
 
     start_logger(tag);
     printf("Some message.\n");
