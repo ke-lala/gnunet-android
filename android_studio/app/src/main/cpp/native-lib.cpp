@@ -249,10 +249,7 @@ Java_org_gnu_gnunet_MainActivity_stringFromJNI(
     char *const non_const_ptr = const_cast<char*>(tmp_file.c_str());
 
     char *const argvx[] = {
-            "-L",
-            "DEBUG",
-            "-l",
-            non_const_ptr,
+            "BuggerAll",
             NULL
     };
 
@@ -263,8 +260,10 @@ Java_org_gnu_gnunet_MainActivity_stringFromJNI(
 
     start_logger(tag);
     printf("Some message.\n");
+    /*
     GNUNET_log (GNUNET_ERROR_TYPE_ERROR,
                 "Simulate error message. We do not no what is the actual log level.\n");
+                */
     cfg = GNUNET_CONFIGURATION_create ();
     AAsset *asset = AAssetManager_open(mgr, "gnunet.conf", AASSET_MODE_BUFFER);
     char buf[AAsset_getLength(asset)];
@@ -278,7 +277,7 @@ Java_org_gnu_gnunet_MainActivity_stringFromJNI(
 
     AAsset_close(asset);
 
-    GNUNET_SERVICE_main (4,
+    GNUNET_SERVICE_main (1,
                         argvx,
                         cfg);
 
