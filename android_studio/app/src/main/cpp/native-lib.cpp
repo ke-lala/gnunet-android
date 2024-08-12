@@ -1,5 +1,8 @@
+#include <fstream>
+#include <iostream>
 #include <jni.h>
 #include <string>
+#include <vector>
 #include <android/log.h>
 #include <android/asset_manager.h>
 #include <android/asset_manager_jni.h>
@@ -248,7 +251,9 @@ Java_org_gnu_gnunet_MainActivity_stringFromJNI(
     LOGD ("Temp file is here: %s", tmp_file.c_str());
     LOGD ("current ltdl search path: %s", lt_dlgetsearchpath());
 
-    lt_dlsetsearchpath ("/data/user/0/org.gnu.gnunet/:/data/user/0/org.gnu.gnunet/assets");
+    lt_dlsetsearchpath ("/data/user/0/org.gnu.gnunet/files/");
+
+    LOGD ("current ltdl search path afterwards: %s", lt_dlgetsearchpath());
     char *const non_const_ptr = const_cast<char*>(tmp_file.c_str());
 
     char *const argvx[] = {
@@ -269,32 +274,50 @@ Java_org_gnu_gnunet_MainActivity_stringFromJNI(
                 */
 
     AAsset *plugin_asset = AAssetManager_open(mgr, "libgnunet_plugin_peerstore_sqlite.so", AASSET_MODE_BUFFER);
-    char plugin_buf[AAsset_getLength(plugin_asset)];
-    AAsset_read(plugin_asset, plugin_buf, AAsset_getLength(plugin_asset));
+    const off_t &length = AAsset_getLength(plugin_asset);
+    char plugin_buf[length];
+    LOGD("libgnunet_plugin_peerstore_sqlite.so size is %ld bytes", length);
+    AAsset_read(plugin_asset, plugin_buf, length);
     enum GNUNET_DISK_AccessPermissions permission = static_cast<GNUNET_DISK_AccessPermissions>(
             GNUNET_DISK_PERM_USER_READ
             | GNUNET_DISK_PERM_USER_WRITE
             | GNUNET_DISK_PERM_USER_EXEC);
-    
-    struct GNUNET_DISK_FileHandle *fh = GNUNET_DISK_file_open ("/data/user/0/org.gnu.gnunet/libgnunet_plugin_peerstore_sqlite.so",
+
+    // This code fails to get a fileHandle. TODO work out why not. It means the write doesn't happen.
+    struct GNUNET_DISK_FileHandle *fh = GNUNET_DISK_file_open ("/data/user/0/org.gnu.gnunet/files/libgnunet_plugin_peerstore_sqlite_gnunet.so",
                            GNUNET_DISK_OPEN_WRITE,
                            permission );
     GNUNET_DISK_file_write (fh,
                             plugin_buf,
-                            sizeof (plugin_buf));
+                            length);
     GNUNET_DISK_file_close (fh);
+
+    // The following code does work; so does the kotlin code that copies the .so file from the assets folder.
+    std::vector<int> data = {1, 2, 3, 4, 5, 6};
+    std::ofstream outfile("/data/user/0/org.gnu.gnunet/files/output.bin", std::ios::binary);
+    if (!outfile) {
+        LOGE("Could not open output.bin for writing");
+    }
+
+    outfile.write(reinterpret_cast<const char*>(data.data()), data.size() * sizeof(int ));
+    if (!outfile) {
+        LOGE("Write failed for output.bin");
+    }
+    outfile.close();
+
 
     cfg = GNUNET_CONFIGURATION_create ();
     AAsset *asset = AAssetManager_open(mgr, "gnunet.conf", AASSET_MODE_BUFFER);
-    char buf[AAsset_getLength(asset)];
+    const off_t &confif_file_size = AAsset_getLength(asset);
+    LOGD("gnunet.conf is %ld bytes", confif_file_size);
+    char buf[confif_file_size];
 
-    AAsset_read(asset, buf, AAsset_getLength(asset));
+    AAsset_read(asset, buf, confif_file_size);
 
     if (GNUNET_OK != GNUNET_CONFIGURATION_deserialize (cfg, buf, strlen(buf), NULL))
     {
         LOGE ("Deserialization of configuration failed!");
     }
-
     AAsset_close(asset);
 
     GNUNET_SERVICE_main (1,

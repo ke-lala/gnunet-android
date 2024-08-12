@@ -3,7 +3,12 @@ package org.gnu.gnunet
 import android.content.res.AssetManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import org.gnu.gnunet.databinding.ActivityMainBinding
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.InputStream
 
 class MainActivity : AppCompatActivity() {
 
@@ -15,10 +20,53 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val isSuccess = copyFileFromAssetsToInternalStorage("libgnunet_plugin_peerstore_sqlite.so", "libgnunet_plugin_peerstore_sqlite.so")
+        if (isSuccess) {
+            Log.d("GNUNET", "onCreate: file copied successfully")
+        } else {
+            Log.e("GNUNET", "onCreate: file not copied :(")
+        }
+
         // Example of a call to a native method
         binding.sampleText.text = stringFromJNI(assets)
     }
 
+    private fun copyFileFromAssetsToInternalStorage(fileName: String, outputFileName: String): Boolean {
+        var inputStream: InputStream? = null
+        var outputStream: FileOutputStream? = null
+
+        return try {
+            // Access the file from the assets
+            inputStream = assets.open(fileName)
+
+            // Create the destination file in internal storage
+            val outputFile = File(filesDir, outputFileName)
+            Log.d("GNUNET", outputFile.path)
+            outputStream = FileOutputStream(outputFile)
+
+            // Buffer to hold data during copy
+            val buffer = ByteArray(1024)
+            var length: Int
+
+            // Copy the file contents from assets to the destination file
+            while (inputStream.read(buffer).also { length = it } > 0) {
+                outputStream.write(buffer, 0, length)
+            }
+
+            outputFile.setReadable(true, false)
+            outputFile.setExecutable(true, false)
+            //Success
+            true
+        } catch (e: IOException) {
+            e.printStackTrace()
+
+            // Failure
+            false
+        } finally {
+            inputStream?.close()
+            outputStream?.close()
+        }
+    }
     /**
      * A native method that is implemented by the 'gnunet' native library,
      * which is packaged with this application.
