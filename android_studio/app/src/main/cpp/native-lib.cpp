@@ -4,6 +4,7 @@
 #include <android/asset_manager.h>
 #include <android/asset_manager_jni.h>
 #include "gnunet_util_lib.h"
+#include <ltdl.h>
 
 #define TAG "GNUNET"
 
@@ -245,7 +246,9 @@ Java_org_gnu_gnunet_MainActivity_stringFromJNI(
 
     std::string tmp_file = GNUNET_DISK_mktemp ("test");
     LOGD ("Temp file is here: %s", tmp_file.c_str());
+    LOGD ("current ltdl search path: %s", lt_dlgetsearchpath());
 
+    lt_dlsetsearchpath ("/data/user/0/org.gnu.gnunet/:/data/user/0/org.gnu.gnunet/assets");
     char *const non_const_ptr = const_cast<char*>(tmp_file.c_str());
 
     char *const argvx[] = {
@@ -264,6 +267,23 @@ Java_org_gnu_gnunet_MainActivity_stringFromJNI(
     GNUNET_log (GNUNET_ERROR_TYPE_ERROR,
                 "Simulate error message. We do not no what is the actual log level.\n");
                 */
+
+    AAsset *plugin_asset = AAssetManager_open(mgr, "libgnunet_plugin_peerstore_sqlite.so", AASSET_MODE_BUFFER);
+    char plugin_buf[AAsset_getLength(plugin_asset)];
+    AAsset_read(plugin_asset, plugin_buf, AAsset_getLength(plugin_asset));
+    enum GNUNET_DISK_AccessPermissions permission = static_cast<GNUNET_DISK_AccessPermissions>(
+            GNUNET_DISK_PERM_USER_READ
+            | GNUNET_DISK_PERM_USER_WRITE
+            | GNUNET_DISK_PERM_USER_EXEC);
+    
+    struct GNUNET_DISK_FileHandle *fh = GNUNET_DISK_file_open ("/data/user/0/org.gnu.gnunet/libgnunet_plugin_peerstore_sqlite.so",
+                           GNUNET_DISK_OPEN_WRITE,
+                           permission );
+    GNUNET_DISK_file_write (fh,
+                            plugin_buf,
+                            sizeof (plugin_buf));
+    GNUNET_DISK_file_close (fh);
+
     cfg = GNUNET_CONFIGURATION_create ();
     AAsset *asset = AAssetManager_open(mgr, "gnunet.conf", AASSET_MODE_BUFFER);
     char buf[AAsset_getLength(asset)];
