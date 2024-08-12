@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
         // Used to load the 'gnunet' library on application startup.
         init {
             System.loadLibrary("sqliteX");
-            System.loadLibrary("gnunet")
+            System.loadLibrary("gnunetti")
         }
     }
 }
