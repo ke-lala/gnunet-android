@@ -249,6 +249,8 @@ Java_org_gnu_gnunet_MainActivity_stringFromJNI(
 
     std::string tmp_file = GNUNET_DISK_mktemp ("test");
     LOGD ("Temp file is here: %s", tmp_file.c_str());
+    int ok = lt_dlinit();
+    LOGD("lt_dlinit return code: %d", ok);
     LOGD ("current ltdl search path: %s", lt_dlgetsearchpath());
 
     lt_dlsetsearchpath ("/data/user/0/org.gnu.gnunet/files/");
