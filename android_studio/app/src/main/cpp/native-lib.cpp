@@ -322,7 +322,7 @@ Java_org_gnu_gnunet_MainActivity_stringFromJNI(
     }
     AAsset_close(asset);
 
-    GNUNET_SERVICE_main (1,
+    GNUNET_PROGRAM_monolith_main (1,
                         argvx,
                         cfg);
 
