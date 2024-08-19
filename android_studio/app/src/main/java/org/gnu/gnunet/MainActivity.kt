@@ -20,11 +20,18 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val isSuccess = copyFileFromAssetsToInternalStorage("libgnunet_plugin_peerstore_sqlite.so", "libgnunet_plugin_peerstore_sqlite.so")
+        var isSuccess = copyFileFromAssetsToInternalStorage("libgnunet_plugin_peerstore_sqlite.so", "libgnunet_plugin_peerstore_sqlite.so")
         if (isSuccess) {
-            Log.d("GNUNET", "onCreate: file copied successfully")
+            Log.d("GNUNET", "onCreate: file libgnunet_plugin_peerstore_sqlite.so copied successfully")
         } else {
-            Log.e("GNUNET", "onCreate: file not copied :(")
+            Log.e("GNUNET", "onCreate: file libgnunet_plugin_peerstore_sqlite.so not copied :(")
+        }
+
+        isSuccess = copyFileFromAssetsToInternalStorage("private_key.ecc", "private_key.ecc")
+        if (isSuccess) {
+            Log.d("GNUNET", "onCreate: file private_key.ecc copied successfully")
+        } else {
+            Log.e("GNUNET", "onCreate: file private_key.ecc not copied :(")
         }
 
         // Example of a call to a native method
