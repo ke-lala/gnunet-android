@@ -1,0 +1,11 @@
+prefix=/home/user/AndroidStudioProjects/gnunet-android/android_studio/distribution/libgnunet/lib/arm64-v8a
+includedir=${prefix}/include
+libdir=${prefix}
+
+Name: gnunetgnsrecord
+Description: Provides API for manipulating GNS records
+URL: https://www.gnunet.org
+Version: 0.24.1-19-gf8d2003a0
+Requires.private: gnunetutil, libsodium >= 1.0.18, libgcrypt
+Libs: -L${prefix} -lgnunetgnsrecord
+Cflags: -I${includedir}

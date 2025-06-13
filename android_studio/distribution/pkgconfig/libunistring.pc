@@ -1,4 +1,4 @@
-prefix=/home/user/AndroidStudioProjects/GNUnet/distribution/libunistring/lib/arm64-v8a
+prefix=/home/user/AndroidStudioProjects/gnunet-android/android_studio/distribution/libunistring/lib/arm64-v8a
 exec_prefix=${prefix}
 libdir=${exec_prefix}
 sharedlibdir=${libdir}

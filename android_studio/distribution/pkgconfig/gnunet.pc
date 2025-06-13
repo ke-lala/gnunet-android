@@ -1,0 +1,13 @@
+prefix=/home/user/AndroidStudioProjects/gnunet-android/android_studio/distribution/libgnunet/lib/arm64-v8a
+includedir=${prefix}/include
+libdir=${prefix}
+
+Name: gnunet
+Description: Monolithic GNUnet core library
+URL: https://www.gnunet.org
+Version: 0.24.1-19-gf8d2003a0
+Requires: libsodium >=  1.0.18, libsodium >= 1.0.18, libgcrypt, libunistring, libltdl, libidn, jansson, libmicrohttpd, libcurl >=  7.85.0, libcurl >= 7.85.0, sqlite3 >=  3.35.0, sqlite3 >= 3.35.0
+Requires.private: gnunetutil, gnunetjson, gnunetblock, gnunetgnsrecord, gnunethello
+Libs: -L${libdir} -lgnunet
+Libs.private: -lz -lm -L${prefix} -lgnunetcurl -lgnunetgnsrecordjson -lgnunetregexblock -lgnunetblockgroup
+Cflags: -I${includedir}/include

@@ -1,0 +1,11 @@
+prefix=/home/user/AndroidStudioProjects/gnunet-android/android_studio/distribution/libgnunet/lib/arm64-v8a
+includedir=${prefix}/include
+libdir=${prefix}
+
+Name: gnunethello
+Description: Helper library for handling GNUnet HELLO messages
+URL: https://www.gnunet.org
+Version: 0.24.1-19-gf8d2003a0
+Requires.private: gnunetutil, libgcrypt, libsodium >= 1.0.18
+Libs: -L${prefix} -lgnunethello
+Cflags: -I${includedir}
