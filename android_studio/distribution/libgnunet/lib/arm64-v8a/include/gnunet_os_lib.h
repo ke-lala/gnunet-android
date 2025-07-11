@@ -304,6 +304,12 @@ struct GNUNET_OS_ProjectData
    * reserved.
    */
   const char *agpl_url;
+
+  /**
+   * In case we do not have environment variables to determine the install path,
+   * the install path can be set explicitly.
+   */
+  const char *install_path_override;
 };
 
 
