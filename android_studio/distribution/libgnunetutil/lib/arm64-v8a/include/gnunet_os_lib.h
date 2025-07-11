@@ -289,13 +289,13 @@ struct GNUNET_OS_ProjectData
    * Gettext domain for localisation, e.g. the PACKAGE macro.
    * Setting this field to NULL disables gettext.
    */
-  char *gettext_domain;
+  const char *gettext_domain;
 
   /**
    * Gettext directory, e.g. the LOCALEDIR macro.
    * If this field is NULL, the path is automatically inferred.
    */
-  char *gettext_path;
+  const char *gettext_path;
 
   /**
    * URL pointing to the source code of the application.  Required for AGPL.
@@ -303,7 +303,13 @@ struct GNUNET_OS_ProjectData
    * provide it in some other way.  If non-NULL, message type 1 and 2 are
    * reserved.
    */
-  char *agpl_url;
+  const char *agpl_url;
+
+  /**
+   * In case we do not have environment variables to determine the install path,
+   * the install path can be set explicitly.
+   */
+  const char *install_path_override;
 };
 
 
@@ -311,23 +317,28 @@ struct GNUNET_OS_ProjectData
  * Return default project data used by 'libgnunetutil' for GNUnet.
  */
 const struct GNUNET_OS_ProjectData *
-GNUNET_OS_project_data_default (void);
+GNUNET_OS_project_data_gnunet (void);
 
 
 /**
- * @return current (actual) project data.
- */
-const struct GNUNET_OS_ProjectData *
-GNUNET_OS_project_data_get (void);
-
-
-/**
- * Setup OS subsystem with project data.
+ * Setting project data used by 'libgnunetutil' for GNUnet.
  *
- * @param pd project data used to determine paths.
+ * @param project_data data to set instead of default.
  */
 void
-GNUNET_OS_init (const struct GNUNET_OS_ProjectData *pd);
+GNUNET_OS_project_data_gnunet_set (const struct GNUNET_OS_ProjectData *project_data);
+
+
+/**
+ * Setup OS subsystem for the given project data and package.
+ * Initializes GNU Gettext.
+ *
+ * @param package_name name of the package for GNU gettext
+ * @param pd project data to use to determine paths
+ */
+void
+GNUNET_OS_init (const char *package_name,
+                const struct GNUNET_OS_ProjectData *pd);
 
 
 /**
@@ -335,11 +346,13 @@ GNUNET_OS_init (const struct GNUNET_OS_ProjectData *pd);
  * #GNUNET_OS_IPK_SELF_PREFIX, the current running apps installation
  * directory.
  *
+ * @param pd project data to use to determine paths
  * @param dirkind what kind of directory is desired?
  * @return a pointer to the dir path (to be freed by the caller)
  */
 char *
-GNUNET_OS_installation_get_path (enum GNUNET_OS_InstallationPathKind dirkind);
+GNUNET_OS_installation_get_path (const struct GNUNET_OS_ProjectData *pd,
+                                 enum GNUNET_OS_InstallationPathKind dirkind);
 
 
 /**
@@ -347,11 +360,13 @@ GNUNET_OS_installation_get_path (enum GNUNET_OS_InstallationPathKind dirkind);
  * binary, try to prefix it with the libexec/-directory to get the
  * full path.
  *
+ * @param pd project data to use to determine paths
  * @param progname name of the binary
  * @return full path to the binary, if possible, otherwise copy of 'progname'
  */
 char *
-GNUNET_OS_get_libexec_binary_path (const char *progname);
+GNUNET_OS_get_libexec_binary_path (const struct GNUNET_OS_ProjectData *pd,
+                                   const char *progname);
 
 
 /**
@@ -361,13 +376,15 @@ GNUNET_OS_get_libexec_binary_path (const char *progname);
  * GNUNET_OS_get_libexec_binary_path. If @a progname is an absolute path, a
  * copy of this path is returned.
  *
+ * @param pd project data to use to determine paths
  * @param cfg configuration to inspect
  * @param progname name of the binary
  * @return full path to the binary, if possible, a copy of @a progname
  *         otherwise
  */
 char *
-GNUNET_OS_get_suid_binary_path (const struct GNUNET_CONFIGURATION_Handle *cfg,
+GNUNET_OS_get_suid_binary_path (const struct GNUNET_OS_ProjectData *pd,
+                                const struct GNUNET_CONFIGURATION_Handle *cfg,
                                 const char *progname);
 
 

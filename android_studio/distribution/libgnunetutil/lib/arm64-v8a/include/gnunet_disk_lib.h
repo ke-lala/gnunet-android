@@ -276,6 +276,7 @@ GNUNET_DISK_handle_invalid (const struct GNUNET_DISK_FileHandle *h);
 enum GNUNET_GenericReturnValue
 GNUNET_DISK_file_test (const char *fil);
 
+
 /**
  * Check that fil corresponds to a filename and the file has read permissions.
  *
@@ -287,13 +288,15 @@ GNUNET_DISK_file_test (const char *fil);
 enum GNUNET_GenericReturnValue
 GNUNET_DISK_file_test_read (const char *fil);
 
+
 /**
  * Move a file out of the way (create a backup) by renaming it to "orig.NUM~"
  * where NUM is the smallest number that is not used yet.
  *
  * @param fil name of the file to back up
+ * @return the backup file name (must be freed by caller)
  */
-void
+char*
 GNUNET_DISK_file_backup (const char *fil);
 
 
@@ -358,13 +361,15 @@ GNUNET_DISK_file_get_identifiers (const char *filename,
  * 6 random characters will be appended to the name to create a unique
  * filename.
  *
+ * @param pd project data to use to determine paths
  * @param t component to use for the name;
  *        does NOT contain "XXXXXX" or "/tmp/".
  * @return NULL on error, otherwise name of fresh
  *         file on disk in directory for temporary files
  */
 char *
-GNUNET_DISK_mktemp (const char *t);
+GNUNET_DISK_mktemp (const struct GNUNET_OS_ProjectData *pd,
+                    const char *t);
 
 
 /**
@@ -372,12 +377,14 @@ GNUNET_DISK_mktemp (const char *t);
  * absolute path, the current 'TMPDIR' will be prepended.  In any case, 6
  * random characters will be appended to the name to create a unique name.
  *
+ * @param pd project data to use to determine paths
  * @param t component to use for the name;
  *        does NOT contain "XXXXXX" or "/tmp/".
  * @return NULL on error, otherwise name of freshly created directory
  */
 char *
-GNUNET_DISK_mkdtemp (const char *t);
+GNUNET_DISK_mkdtemp (const struct GNUNET_OS_ProjectData *pd,
+                     const char *t);
 
 
 /**
@@ -573,22 +580,6 @@ GNUNET_DISK_file_read (const struct GNUNET_DISK_FileHandle *h,
 
 /**
  * Read the contents of a binary file into a buffer.
- * Guarantees not to block (returns GNUNET_SYSERR and sets errno to EAGAIN
- * when no data can be read).
- *
- * @param h handle to an open file
- * @param result the buffer to write the result to
- * @param len the maximum number of bytes to read
- * @return the number of bytes read on success, #GNUNET_SYSERR on failure
- */
-ssize_t
-GNUNET_DISK_file_read_non_blocking (const struct GNUNET_DISK_FileHandle *h,
-                                    void *result,
-                                    size_t len);
-
-
-/**
- * Read the contents of a binary file into a buffer.
  *
  * @param fn file name
  * @param result the buffer to write the result to
@@ -734,11 +725,13 @@ GNUNET_DISK_directory_remove (const char *filename);
  * Remove the directory given under @a option in
  * section [PATHS] in configuration under @a cfg_filename
  *
+ * @param pd project data to use to determine paths
  * @param cfg_filename configuration file to parse
  * @param option option with the dir name to purge
  */
 void
-GNUNET_DISK_purge_cfg_dir (const char *cfg_filename,
+GNUNET_DISK_purge_cfg_dir (const struct GNUNET_OS_ProjectData *pd,
+                           const char *cfg_filename,
                            const char *option);
 
 
