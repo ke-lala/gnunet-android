@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace = "org.gnu.gnunet"
-    compileSdk = 35
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "org.gnu.gnunet"
-        minSdk = 31
-        targetSdk = 35
+        minSdk = 29
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 

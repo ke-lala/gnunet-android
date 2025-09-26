@@ -361,13 +361,15 @@ GNUNET_DISK_file_get_identifiers (const char *filename,
  * 6 random characters will be appended to the name to create a unique
  * filename.
  *
+ * @param pd project data to use to determine paths
  * @param t component to use for the name;
  *        does NOT contain "XXXXXX" or "/tmp/".
  * @return NULL on error, otherwise name of fresh
  *         file on disk in directory for temporary files
  */
 char *
-GNUNET_DISK_mktemp (const char *t);
+GNUNET_DISK_mktemp (const struct GNUNET_OS_ProjectData *pd,
+                    const char *t);
 
 
 /**
@@ -375,12 +377,14 @@ GNUNET_DISK_mktemp (const char *t);
  * absolute path, the current 'TMPDIR' will be prepended.  In any case, 6
  * random characters will be appended to the name to create a unique name.
  *
+ * @param pd project data to use to determine paths
  * @param t component to use for the name;
  *        does NOT contain "XXXXXX" or "/tmp/".
  * @return NULL on error, otherwise name of freshly created directory
  */
 char *
-GNUNET_DISK_mkdtemp (const char *t);
+GNUNET_DISK_mkdtemp (const struct GNUNET_OS_ProjectData *pd,
+                     const char *t);
 
 
 /**

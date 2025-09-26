@@ -1,9 +1,9 @@
 package org.gnu.gnunet
 
 import android.content.res.AssetManager
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import org.gnu.gnunet.databinding.ActivityMainBinding
 import java.io.File
 import java.io.FileOutputStream
@@ -17,10 +17,25 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val dataPath: String = filesDir.getAbsolutePath()
+        /*try {
+            System.loadLibrary("gnunetutil") // Muss ganz früh geladen sein
+            Log.d("DEBUG", "libgnunetutil.so geladen")
+        } catch (e: UnsatisfiedLinkError) {
+            Log.e("DEBUG", "Fehler beim Laden libgnunetutil", e)
+        }
+
+        try {
+            System.loadLibrary("gnunet_plugin_peerstore_sqlite") // Muss ganz früh geladen sein
+            Log.d("DEBUG", "libgnunet_plugin_peerstore_sqlite.so geladen")
+        } catch (e: UnsatisfiedLinkError) {
+            Log.e("DEBUG", "Fehler beim Laden libgnunet_plugin_peerstore_sqlite", e)
+        }*/
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        var isSuccess = copyFileFromAssetsToInternalStorage("libgnunet_plugin_peerstore_sqlite.so", "libgnunet_plugin_peerstore_sqlite.so")
+        var isSuccess = copyFileFromAssetsToInternalStorage("plugins/libgnunet_plugin_peerstore_sqlite.so", "libgnunet_plugin_peerstore_sqlite.so")
         if (isSuccess) {
             Log.d("GNUNET", "onCreate: file libgnunet_plugin_peerstore_sqlite.so copied successfully")
         } else {
@@ -34,8 +49,9 @@ class MainActivity : AppCompatActivity() {
             Log.e("GNUNET", "onCreate: file private_key.ecc not copied :(")
         }
 
+        Log.d("GNUNET", "is asset null? assets = $assets")
         // Example of a call to a native method
-        binding.sampleText.text = stringFromJNI(assets)
+        binding.sampleText.text = stringFromJNI(assets, dataPath)
     }
 
     private fun copyFileFromAssetsToInternalStorage(fileName: String, outputFileName: String): Boolean {
@@ -78,12 +94,29 @@ class MainActivity : AppCompatActivity() {
      * A native method that is implemented by the 'gnunet' native library,
      * which is packaged with this application.
      */
-    external fun stringFromJNI(assets: AssetManager): String
+    external fun stringFromJNI(assets: AssetManager,
+                               path: String): String
 
     companion object {
         // Used to load the 'gnunet' library on application startup.
         init {
+            /*try {
+
+
             System.loadLibrary("sqliteX");
+            System.loadLibrary("gnunetsq")
+            System.loadLibrary("gnunetutil")
+            System.loadLibrary("gnunetblock")
+            System.loadLibrary("gnunetregexblock")
+            System.loadLibrary("gnunetblockgroup")
+            System.loadLibrary("gnunetgnsrecord")
+            System.loadLibrary("gnunetjson")
+            System.loadLibrary("gnunethello")
+            System.loadLibrary("gnunet_plugin_peerstore_sqlite");
+            System.loadLibrary("gnunet")
+            } catch (e: UnsatisfiedLinkError) {
+                Log.e("NativeLoader", "Failed to load native library", e);
+            }*/
             System.loadLibrary("gnunetti")
         }
     }

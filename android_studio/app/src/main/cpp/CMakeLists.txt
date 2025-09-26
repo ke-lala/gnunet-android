@@ -14,25 +14,45 @@ project("gnunet")
 # configure import libs
 set(distribution_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../../../distribution)
 
-add_library(libidn SHARED IMPORTED)
-set_target_properties(libidn PROPERTIES IMPORTED_LOCATION
-        ${distribution_DIR}/libidn/lib/${ANDROID_ABI}/libidn.so)
+add_library(idn SHARED IMPORTED)
+set_target_properties(idn PROPERTIES IMPORTED_LOCATION
+        ${distribution_DIR}/idn/lib/${ANDROID_ABI}/libidn.so)
 add_library(sqliteX SHARED IMPORTED)
 set_target_properties(sqliteX PROPERTIES IMPORTED_LOCATION
         ${distribution_DIR}/sqlite/lib/${ANDROID_ABI}/libsqliteX.so)
-add_library(libgnunetutil SHARED IMPORTED)
-set_target_properties(libgnunetutil PROPERTIES IMPORTED_LOCATION
-        ${distribution_DIR}/libgnunetutil/lib/${ANDROID_ABI}/libgnunetutil.so)
-add_library(libgnunetsq SHARED IMPORTED)
-set_target_properties(libgnunetsq PROPERTIES IMPORTED_LOCATION
-        ${distribution_DIR}/libgnunetsq/lib/${ANDROID_ABI}/libgnunetsq.so)
-
-add_library(libgnunethello SHARED IMPORTED)
-set_target_properties(libgnunethello PROPERTIES IMPORTED_LOCATION
-        ${distribution_DIR}/libgnunethello/lib/${ANDROID_ABI}/libgnunethello.so)
-add_library(libgnunet SHARED IMPORTED)
-set_target_properties(libgnunet PROPERTIES IMPORTED_LOCATION
-        ${distribution_DIR}/libgnunet/lib/${ANDROID_ABI}/libgnunet.so)
+add_library(gnunetutil SHARED IMPORTED)
+set_target_properties(gnunetutil PROPERTIES IMPORTED_LOCATION
+        ${distribution_DIR}/gnunetutil/lib/${ANDROID_ABI}/libgnunetutil.so)
+add_library(gnunetsq SHARED IMPORTED)
+set_target_properties(gnunetsq PROPERTIES IMPORTED_LOCATION
+        ${distribution_DIR}/gnunetsq/lib/${ANDROID_ABI}/libgnunetsq.so)
+add_library(gnunetjson SHARED IMPORTED)
+set_target_properties(gnunetjson PROPERTIES IMPORTED_LOCATION
+        ${distribution_DIR}/gnunetjson/lib/${ANDROID_ABI}/libgnunetjson.so)
+add_library(gnunetgnsrecord SHARED IMPORTED)
+set_target_properties(gnunetgnsrecord PROPERTIES IMPORTED_LOCATION
+        ${distribution_DIR}/gnunetgnsrecord/lib/${ANDROID_ABI}/libgnunetgnsrecord.so)
+add_library(gnunetblock SHARED IMPORTED)
+set_target_properties(gnunetblock PROPERTIES IMPORTED_LOCATION
+        ${distribution_DIR}/gnunetblock/lib/${ANDROID_ABI}/libgnunetblock.so)
+add_library(gnunetregexblock SHARED IMPORTED)
+set_target_properties(gnunetregexblock PROPERTIES IMPORTED_LOCATION
+        ${distribution_DIR}/gnunetregexblock/lib/${ANDROID_ABI}/libgnunetregexblock.so)
+add_library(gnunetblockgroup SHARED IMPORTED)
+set_target_properties(gnunetblockgroup PROPERTIES IMPORTED_LOCATION
+        ${distribution_DIR}/gnunetblockgroup/lib/${ANDROID_ABI}/libgnunetblockgroup.so)
+add_library(gnunethello SHARED IMPORTED)
+set_target_properties(gnunethello PROPERTIES IMPORTED_LOCATION
+        ${distribution_DIR}/gnunethello/lib/${ANDROID_ABI}/libgnunethello.so)
+#[[add_library(gnunet_plugin_peerstore_sqlite SHARED IMPORTED)
+set_target_properties(gnunet_plugin_peerstore_sqlite PROPERTIES IMPORTED_LOCATION
+        ${distribution_DIR}/gnunet_plugin_peerstore_sqlite/lib/${ANDROID_ABI}/libgnunet_plugin_peerstore_sqlite.so)]]
+add_library(gnunet SHARED IMPORTED)
+set_target_properties(gnunet PROPERTIES IMPORTED_LOCATION
+        ${distribution_DIR}/gnunet/lib/${ANDROID_ABI}/libgnunet.so)
+add_library(gnunetchat SHARED IMPORTED)
+set_target_properties(gnunetchat PROPERTIES IMPORTED_LOCATION
+        ${distribution_DIR}/gnunetchat/lib/${ANDROID_ABI}/libgnunetchat.so)
 add_library(libgpg-error SHARED IMPORTED)
 set_target_properties(libgpg-error PROPERTIES IMPORTED_LOCATION
         ${distribution_DIR}/libgpg-error/lib/${ANDROID_ABI}/libgpg-error.so)
@@ -63,6 +83,18 @@ set_target_properties(libintl PROPERTIES IMPORTED_LOCATION
 add_library(libgettext SHARED IMPORTED)
 set_target_properties(libgettext PROPERTIES IMPORTED_LOCATION
         ${distribution_DIR}/gettext/lib/${ANDROID_ABI}/libgettextlib-0.22.5.so)
+add_library(jansson SHARED IMPORTED)
+set_target_properties(jansson PROPERTIES IMPORTED_LOCATION
+        ${distribution_DIR}/jansson/lib/${ANDROID_ABI}/libjansson.so)
+add_library(wolfssl SHARED IMPORTED)
+set_target_properties(wolfssl PROPERTIES IMPORTED_LOCATION
+        ${distribution_DIR}/wolfssl/lib/${ANDROID_ABI}/libwolfssl.so)
+add_library(libcurl SHARED IMPORTED)
+set_target_properties(libcurl PROPERTIES IMPORTED_LOCATION
+        ${distribution_DIR}/libcurl/lib/${ANDROID_ABI}/libcurl.so)
+add_library(microhttpd SHARED IMPORTED)
+set_target_properties(microhttpd PROPERTIES IMPORTED_LOCATION
+        ${distribution_DIR}/microhttpd/lib/${ANDROID_ABI}/libmicrohttpd.so)
 
 # build application's shared lib
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
@@ -86,7 +118,7 @@ add_library(gnunetti SHARED
 )
 
 target_include_directories(gnunetti PRIVATE
-        ${distribution_DIR}/libidn/lib/${ANDROID_ABI}/include
+        ${distribution_DIR}/idn/lib/${ANDROID_ABI}/include
         ${distribution_DIR}/sqlite/lib/${ANDROID_ABI}/include
         ${distribution_DIR}/libsodium/lib/${ANDROID_ABI}/include
         ${distribution_DIR}/libgcrypt/lib/${ANDROID_ABI}/include
@@ -98,11 +130,20 @@ target_include_directories(gnunetti PRIVATE
         ${distribution_DIR}/libiconv/lib/${ANDROID_ABI}/include
         ${distribution_DIR}/libintl/lib/${ANDROID_ABI}/include
         ${distribution_DIR}/gettext/lib/${ANDROID_ABI}/include
-        ${distribution_DIR}/libgnunetutil/lib/${ANDROID_ABI}/include
-        ${distribution_DIR}/libgnunet/lib/${ANDROID_ABI}/include
-        ${distribution_DIR}/libgnunethello/lib/${ANDROID_ABI}/include
-        ${distribution_DIR}/libgnunet_plugin_peerstore_sqlite/lib/${ANDROID_ABI}/include
-        ${distribution_DIR}/libgnunetsq/lib/${ANDROID_ABI}/include)
+        ${distribution_DIR}/gnunetutil/lib/${ANDROID_ABI}/include
+        ${distribution_DIR}/gnunet/lib/${ANDROID_ABI}/include
+        ${distribution_DIR}/gnunethello/lib/${ANDROID_ABI}/include
+        ${distribution_DIR}/gnunet_plugin_peerstore_sqlite/lib/${ANDROID_ABI}/include
+        ${distribution_DIR}/gnunetsq/lib/${ANDROID_ABI}/include
+        ${distribution_DIR}/gnunetgnsrecord/lib/${ANDROID_ABI}/include
+        ${distribution_DIR}/gnunetblock/lib/${ANDROID_ABI}/include
+        ${distribution_DIR}/gnunetregexblock/lib/${ANDROID_ABI}/include
+        ${distribution_DIR}/gnunetblockgroup/lib/${ANDROID_ABI}/include
+        ${distribution_DIR}/gnunetchat/lib/${ANDROID_ABI}/include
+        ${distribution_DIR}/wolfssl/lib/${ANDROID_ABI}/include
+        ${distribution_DIR}/libcurl/lib/${ANDROID_ABI}/include
+        ${distribution_DIR}/jansson/lib/${ANDROID_ABI}/include
+        ${distribution_DIR}/microhttpd/lib/${ANDROID_ABI}/include)
 
 # Specifies libraries CMake should link to your target library. You
 # can link libraries from various origins, such as libraries defined in this
@@ -114,18 +155,27 @@ target_link_libraries(gnunetti
         libgcrypt
         libsodium
         libtool
-        libidn
+        idn
         gmp
         libunistring
         libz
         libiconv
         libintl
         libgettext
-        libgnunetutil
-        libgnunetsq
-        libgnunethello
-        #libgnunet_plugin_peerstore_sqlite
-        libgnunet
+        wolfssl
+        libcurl
+        jansson
+        microhttpd
+        gnunetsq
+        gnunetregexblock
+        gnunetblock
+        gnunetblockgroup
+        gnunetgnsrecord
+        gnunetjson
+        gnunethello
+        gnunetutil
+        gnunet
+        gnunetchat
         sqliteX
         log)
 
