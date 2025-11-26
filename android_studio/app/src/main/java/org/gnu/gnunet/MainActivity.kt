@@ -1,9 +1,12 @@
 package org.gnu.gnunet
 
+import android.content.Intent
 import android.content.res.AssetManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import org.gnu.gnunet.core.GnunetCoreService
 import org.gnu.gnunet.databinding.ActivityMainBinding
 import java.io.File
 import java.io.FileOutputStream
@@ -51,7 +54,13 @@ class MainActivity : AppCompatActivity() {
 
         Log.d("GNUNET", "is asset null? assets = $assets")
         // Example of a call to a native method
-        binding.sampleText.text = stringFromJNI(assets, dataPath)
+        val intent = Intent(this, GnunetCoreService::class.java)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(intent)
+        } else {
+            startService(intent)
+        }
+        //binding.sampleText.text = stringFromJNI(assets, dataPath)
     }
 
     private fun copyFileFromAssetsToInternalStorage(fileName: String, outputFileName: String): Boolean {

@@ -115,6 +115,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 add_library(gnunetti SHARED
         # List C/C++ source files with relative paths to this CMakeLists.txt.
         native-lib.cpp
+        GnunetChatIpcBridge.cpp
 )
 
 target_include_directories(gnunetti PRIVATE
