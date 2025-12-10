@@ -34,18 +34,8 @@
  */
 /**@{*/
 
-#ifndef __cplusplus
 #include <gnunet/gnunet_util_lib.h>
-#else
-enum GNUNET_GenericReturnValue {
-  GNUNET_SYSERR = -1,
-  GNUNET_NO = 0,
-  GNUNET_OK = 1,
-  GNUNET_YES = 1,
-};
 
-struct GNUNET_CONFIGURATION_Handle;
-#endif
 
 #include <stdint.h>
 #include <time.h>
@@ -55,7 +45,7 @@ struct GNUNET_CONFIGURATION_Handle;
  *                          the #GNUNET_MESSENGER_VERSION of the GNUnet Messenger
  *                          service while the patch version is independent.
  */
-#define GNUNET_CHAT_VERSION 0x000000050003L
+#define GNUNET_CHAT_VERSION 0x000000060001L
 
 #define GNUNET_CHAT_VERSION_MAJOR ((GNUNET_CHAT_VERSION >> 32L) & 0xFFFFL)
 #define GNUNET_CHAT_VERSION_MINOR ((GNUNET_CHAT_VERSION >> 16L) & 0xFFFFL)
@@ -897,6 +887,16 @@ GNUNET_CHAT_iterate_contacts (struct GNUNET_CHAT_Handle *handle,
                               void *cls);
 
 /**
+ * Returns the chat contact matching a given chat <i>handle</i>'s current 
+ * account.
+ *
+ * @param[in,out] handle Chat handle
+ * @return Chat contact or NULL
+ */
+struct GNUNET_CHAT_Contact*
+GNUNET_CHAT_get_own_contact (struct GNUNET_CHAT_Handle *handle);
+
+/**
  * Returns the provided name of a given <i>account</i> or NULL on failure.
  *
  * @param[in] account Chat account
@@ -1256,7 +1256,7 @@ GNUNET_CHAT_group_get_context (struct GNUNET_CHAT_Group *group);
  *         #GNUNET_SYSERR otherwise.
  */
 enum GNUNET_GenericReturnValue
-GNUNET_CHAT_context_get_status (const struct GNUNET_CHAT_Context *context);
+GNUNET_CHAT_context_get_status (struct GNUNET_CHAT_Context *context);
 
 /**
  * Requests a <i>context</i> to get established between all required contacts.
@@ -1557,6 +1557,27 @@ GNUNET_CHAT_message_get_read_receipt (struct GNUNET_CHAT_Message *message,
  */
 const char*
 GNUNET_CHAT_message_get_text (const struct GNUNET_CHAT_Message *message);
+
+/**
+ * Sets a custom <i>user pointer</i> to a given <i>message</i> so it can
+ * be accessed in message related callbacks.
+ *
+ * @param[in,out] message Message
+ * @param[in] user_pointer Custom user pointer
+ */
+void
+GNUNET_CHAT_message_set_user_pointer (struct GNUNET_CHAT_Message *message,
+                                      void *user_pointer);
+
+/**
+ * Returns the custom user pointer of a given <i>message</i> or NULL if it
+ * was not set any.
+ *
+ * @param[in] message Message
+ * @return Custom user pointer
+ */
+void*
+GNUNET_CHAT_message_get_user_pointer (const struct GNUNET_CHAT_Message *message);
 
 /**
  * Returns the account of a given <i>message</i> which is either 
@@ -1897,6 +1918,17 @@ GNUNET_CHAT_invitation_is_accepted (const struct GNUNET_CHAT_Invitation *invitat
  */
 enum GNUNET_GenericReturnValue
 GNUNET_CHAT_invitation_is_rejected (const struct GNUNET_CHAT_Invitation *invitation);
+
+/**
+ * Returns whether the intend from a given 
+ * <i>invitation</i>. is to open a direct chat or
+ * a group chat.
+ *
+ * @param[in] invitation Chat invitation
+ * @return #GNUNET_YES if it is a direct chat request, #GNUNET_NO otherwise
+ */
+enum GNUNET_GenericReturnValue
+GNUNET_CHAT_invitation_is_direct (const struct GNUNET_CHAT_Invitation *invitation);
 
 /**
  * Returns the discourse id of a given chat <i>discourse</i>.
