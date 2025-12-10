@@ -31,19 +31,19 @@
  */
 
 /* The version of GNUnet */
-#define GNUNET_VERSION "0.21.1-145-g8bfe56861"
+#define GNUNET_VERSION "0.24.1-19-gf8d2003a0"
 
 /* Major version */
 #define GNUNET_MAJOR_VERSION 0
 
 /* Micro version */
-#define GNUNET_MINOR_VERSION 21
+#define GNUNET_MINOR_VERSION 24
 
 /* Mico version */
 #define GNUNET_MICRO_VERSION 1
 
 /* Set to 1 is this is an experimental build */
-#define GNUNET_EXPERIMENTAL 1
+#define GNUNET_EXPERIMENTAL 0
 
 /* Set to 1 if GnuTLS has DANE support */
 #define GNUNET_CURL_GNUTLS 0

@@ -999,6 +999,22 @@ struct GNUNET_PQ_ResultSpec
 GNUNET_PQ_result_spec_int64 (const char *name,
                              int64_t *i64);
 
+/**
+ * Allow NULL values in an array to be found in the database for the given value.
+ *
+ * @param rs result spec entry to modify, MUST be one for the _array_ types
+ * @param[out] is_nulls location where to put the array of bools,
+ *     whose elements will be set to 'true' if the value was indeed NULL,
+ *     or to 'false' if the value was non-NULL.
+ *     This parameter MUST NOT be NULL itself.
+ *     The length of the allocated array will be equal to the length of
+ *     the result for the values in @a rs.
+ * @return array entry for the result specification to use
+ */
+struct GNUNET_PQ_ResultSpec
+GNUNET_PQ_result_spec_array_allow_nulls (
+  struct GNUNET_PQ_ResultSpec rs,
+  bool **is_nulls);
 
 /**
  * array of bool expected.
@@ -1121,7 +1137,7 @@ GNUNET_PQ_result_spec_array_timestamp (
  * @param name name of the field in the table
  * @param[out] num where to store the number of elements
  * @param[out] sizes where to store the @a num size's of byte-buffers in @a dst
- * @param[out] dst where to store the continuous array of @a num byte-buffers , allocated
+ * @param[out] dst where to store the continuous array of @a num byte-buffers of sizes given in @a size, allocated
  * @return array entry for the result specification to use
  */
 struct GNUNET_PQ_ResultSpec
@@ -1140,7 +1156,7 @@ GNUNET_PQ_result_spec_array_variable_size (
  * @param name name of the field in the table
  * @param size number of bytes expected in each element of @a dst
  * @param[out] num where to store the number of elements
- * @param[out] dst where to store the results, an continuous array of fixed-size elements
+ * @param[out] dst where to store the results, an continuous array of @num fixed-size elements
  * @return array entry for the result specification to use
  */
 struct GNUNET_PQ_ResultSpec
@@ -1198,6 +1214,32 @@ struct GNUNET_PQ_ResultSpec
 GNUNET_PQ_result_spec_blind_sign_pub (
   const char *name,
   struct GNUNET_CRYPTO_BlindSignPublicKey **public_key);
+
+
+/**
+ * Blinded signature expected.
+ *
+ * @param name name of the field in the table
+ * @param[out] b_sig where to store the blinded signature
+ * @return array entry for the result specification to use
+ */
+struct GNUNET_PQ_ResultSpec
+GNUNET_PQ_result_spec_blinded_sig (
+  const char *name,
+  struct GNUNET_CRYPTO_BlindedSignature **b_sig);
+
+
+/**
+ * Unblinded signature expected.
+ *
+ * @param name name of the field in the table
+ * @param[out] ub_sig where to store the unblinded signature
+ * @return array entry for the result specification to use
+ */
+struct GNUNET_PQ_ResultSpec
+GNUNET_PQ_result_spec_unblinded_sig (
+  const char *name,
+  struct GNUNET_CRYPTO_UnblindedSignature **ub_sig);
 
 
 /**

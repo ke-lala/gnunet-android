@@ -203,7 +203,7 @@ GNUNET_STRINGS_from_utf8 (const char *input,
  *
  * @param input input string
  * @param output output buffer
- * @return GNUNET_OK on success
+ * @return #GNUNET_OK on success
  */
 enum GNUNET_GenericReturnValue
 GNUNET_STRINGS_utf8_tolower (const char *input,
@@ -277,6 +277,20 @@ unsigned int
 GNUNET_STRINGS_buffer_tokenize (const char *buffer,
                                 size_t size,
                                 unsigned int count, ...);
+
+
+/**
+ * @ingroup time
+ * Like `asctime`, except for GNUnet time.  Converts a GNUnet internal
+ * absolute time (which is in UTC) to a string in local time.
+ * Note that the returned value will be overwritten if this function
+ * is called again.
+ *
+ * @param t the timestamp to convert
+ * @return timestamp in human-readable form in local time
+ */
+const char *
+GNUNET_STRINGS_timestamp_to_string (struct GNUNET_TIME_Timestamp t);
 
 
 /**
@@ -635,25 +649,6 @@ GNUNET_STRINGS_to_address_ip (const char *addr,
 
 
 /**
- * Returns utf-8 encoded arguments.  Does nothing (returns a copy of
- * @a argc and @a argv) on any platform other than W32.  Returned @a
- * argv has `u8argv[u8argc] == NULL`.  Returned @a argv is a single
- * memory block, and can be freed with a single GNUNET_free() call.
- *
- * @param argc argc (as given by main())
- * @param argv argv (as given by main())
- * @param u8argc a location to store new argc in (though it's th same as argc)
- * @param u8argv a location to store new argv in
- * @return #GNUNET_OK on success, #GNUNET_SYSERR on failure
- */
-enum GNUNET_GenericReturnValue
-GNUNET_STRINGS_get_utf8_args (int argc,
-                              char *const *argv,
-                              int *u8argc,
-                              char *const **u8argv);
-
-
-/**
  * Like strlcpy but portable. The given string @a src is copied in full length
  * (until its null byte). The destination buffer is guaranteed to be
  * null-terminated.
@@ -766,7 +761,7 @@ struct GNUNET_STRINGS_IPv6NetworkPolicy
  *
  * @param routeListX a string specifying the IPv4 subnets
  * @return the converted list, terminated with all zeros;
- *         NULL if the synatx is flawed
+ *         NULL if the syntax is flawed
  */
 struct GNUNET_STRINGS_IPv4NetworkPolicy *
 GNUNET_STRINGS_parse_ipv4_policy (const char *routeListX);
@@ -781,7 +776,7 @@ GNUNET_STRINGS_parse_ipv4_policy (const char *routeListX);
  * Note that the netmask is mandatory if ports are specified.
  *
  * @param routeListX a string specifying the policy
- * @return the converted list, 0-terminated, NULL if the synatx is flawed
+ * @return the converted list, 0-terminated, NULL if the syntax is flawed
  */
 struct GNUNET_STRINGS_IPv6NetworkPolicy *
 GNUNET_STRINGS_parse_ipv6_policy (const char *routeListX);

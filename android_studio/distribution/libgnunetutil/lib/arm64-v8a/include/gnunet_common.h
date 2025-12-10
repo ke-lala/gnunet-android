@@ -55,11 +55,13 @@
 #if defined(__FreeBSD__)
 
 #include <sys/endian.h>
+#define bswap_16(x) bswap16 (x)
 #define bswap_32(x) bswap32 (x)
 #define bswap_64(x) bswap64 (x)
 
 #elif defined(__OpenBSD__)
 
+#define bswap_16(x) swap16 (x)
 #define bswap_32(x) swap32 (x)
 #define bswap_64(x) swap64 (x)
 
@@ -67,6 +69,7 @@
 
 #include <machine/bswap.h>
 #if defined(__BSWAP_RENAME) && ! defined(__bswap_32)
+#define bswap_16(x) bswap16 (x)
 #define bswap_32(x) bswap32 (x)
 #define bswap_64(x) bswap64 (x)
 #endif
@@ -81,7 +84,9 @@
    the header file.  Because this header file uses gettext, this include
    statement makes sure gettext macros are defined even when platform.h is
    unavailable. */
+#ifndef _LIBGETTEXT_H
 #include "gettext.h"
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -330,29 +335,6 @@ struct GNUNET_MessageHeader
 
 
 /**
- * Answer from service to client about last operation.
- */
-struct GNUNET_OperationResultMessage
-{
-  struct GNUNET_MessageHeader header;
-
-  uint32_t reserved GNUNET_PACKED;
-
-  /**
-   * Operation ID.
-   */
-  uint64_t op_id GNUNET_PACKED;
-
-  /**
-   * Status code for the operation.
-   */
-  uint64_t result_code GNUNET_PACKED;
-
-  /* Followed by data. */
-};
-
-
-/**
  * Identifier for an asynchronous execution context.
  */
 struct GNUNET_AsyncScopeId
@@ -552,7 +534,7 @@ __attribute__ ((format (printf, 3, 4)));
               GNUNET_get_log_call_status ((kind) & (~GNUNET_ERROR_TYPE_BULK), \
                                           (comp),                             \
                                           __FILE__,                           \
-                                          __FUNCTION__,                       \
+                                          __func__,                       \
                                           __LINE__);                          \
             if (GN_UNLIKELY (GNUNET_get_log_skip () > 0))                       \
             {                                                                   \
@@ -578,7 +560,7 @@ __attribute__ ((format (printf, 3, 4)));
               GNUNET_get_log_call_status ((kind) & (~GNUNET_ERROR_TYPE_BULK), \
                                           NULL,                               \
                                           __FILE__,                           \
-                                          __FUNCTION__,                       \
+                                          __func__,                       \
                                           __LINE__);                          \
             if (GN_UNLIKELY (GNUNET_get_log_skip () > 0))                       \
             {                                                                   \
@@ -911,6 +893,36 @@ GNUNET_i2s_full (const struct GNUNET_PeerIdentity *pid);
 const char *
 GNUNET_a2s (const struct sockaddr *addr, socklen_t addrlen);
 
+/**
+ * @ingroup logging
+ * Parse an ascii-encoded hexadecimal string into the
+ * buffer. The buffer must be (strlen (src) / 2) bytes
+ * in length.
+ *
+ * @param src the string
+ * @param dst the destination buffer
+ * @param dst_len the length of the @a dst buffer
+ * @param invert read from @a src in inverted direction.
+ * @return number of bytes written.
+ */
+size_t
+GNUNET_hex2b (const char *src, void *dst, size_t dstlen, int invert);
+
+/**
+ * @ingroup logging
+ * Print a byte string in hexadecimal ascii notation
+ *
+ * @param buf the byte string
+ * @param buf_len the length of the @a buf buffer
+ * @param fold insert newline after this number of bytes
+               (0 for no folding)
+ * @param in_be Output byte string in NBO
+ */
+void
+GNUNET_print_bytes (const void *buf,
+                    size_t buf_len,
+                    int fold,
+                    int in_be);
 
 /**
  * @ingroup logging
@@ -1147,7 +1159,7 @@ GNUNET_error_type_to_string (enum GNUNET_ErrorType kind);
 
 /* ************************* endianness conversion ****************** */
 
-#ifdef htonbe64
+#ifdef htobe64
 
 #define GNUNET_htonll(n) htobe64 (n)
 
@@ -1330,32 +1342,6 @@ GNUNET_is_zero_ (const void *a,
     (type *) GNUNET_malloc ((n) * sizeof(type));   \
   })
 /* *INDENT-ON* */
-
-/**
- * @ingroup memory
- * Allocate a size @a n times @a m array
- * with structs or unions of the given @a type.
- *
- * @param n size of the first dimension
- * @param m size of the second dimension
- * @param type name of the struct or union, i.e. pass 'struct Foo'.
- */
-#define GNUNET_new_array_2d(n, m, type) \
-        (type **) GNUNET_xnew_array_2d_ (n, m, sizeof(type), __FILE__, __LINE__)
-
-/**
- * @ingroup memory
- * Allocate a size @a n times @a m times @a o array
- * with structs or unions of the given @a type.
- *
- * @param n size of the first dimension
- * @param m size of the second dimension
- * @param o size of the third dimension
- * @param type name of the struct or union, i.e. pass 'struct Foo'.
- */
-#define GNUNET_new_array_3d(n, m, o, type) \
-        (type ***) GNUNET_xnew_array_3d_ (n, m, o, sizeof(type), __FILE__, \
-                                          __LINE__)
 
 /**
  * @ingroup memory
@@ -1606,52 +1592,6 @@ void *
 GNUNET_xmalloc_ (size_t size,
                  const char *filename,
                  int linenumber);
-
-
-/**
- * Allocate memory for a two dimensional array in one block
- * and set up pointers. Aborts if no more memory is available.
- * Don't use GNUNET_xnew_array_2d_ directly. Use the
- * #GNUNET_new_array_2d macro.
- * The memory of the elements will be zero'ed out.
- *
- * @param n size of the first dimension
- * @param m size of the second dimension
- * @param elementSize size of a single element in bytes
- * @param filename where is this call being made (for debugging)
- * @param linenumber line where this call is being made (for debugging)
- * @return allocated memory, never NULL
- */
-void **
-GNUNET_xnew_array_2d_ (size_t n,
-                       size_t m,
-                       size_t elementSize,
-                       const char *filename,
-                       int linenumber);
-
-
-/**
- * Allocate memory for a three dimensional array in one block
- * and set up pointers. Aborts if no more memory is available.
- * Don't use GNUNET_xnew_array_3d_ directly. Use the
- * #GNUNET_new_array_3d macro.
- * The memory of the elements will be zero'ed out.
- *
- * @param n size of the first dimension
- * @param m size of the second dimension
- * @param o size of the third dimension
- * @param elementSize size of a single element in bytes
- * @param filename where is this call being made (for debugging)
- * @param linenumber line where this call is being made (for debugging)
- * @return allocated memory, never NULL
- */
-void ***
-GNUNET_xnew_array_3d_ (size_t n,
-                       size_t m,
-                       size_t o,
-                       size_t elementSize,
-                       const char *filename,
-                       int linenumber);
 
 
 /**

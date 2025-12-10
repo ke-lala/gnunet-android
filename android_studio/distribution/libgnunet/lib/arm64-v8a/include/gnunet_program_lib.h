@@ -147,35 +147,36 @@ GNUNET_PROGRAM_monolith_main (const struct GNUNET_OS_ProjectData *pd,
                               struct GNUNET_CONFIGURATION_Handle *cfg);
 
 #ifndef HAVE_GNUNET_MONOLITH
-#define GNUNET_DAEMON_MAIN(daemon_name, daemon_help, init_cb)  \
-        int \
-        main (int argc, \
-              char *const *argv) \
-        { \
-          int ret; \
-          struct GNUNET_GETOPT_CommandLineOption options[] = { \
-            GNUNET_GETOPT_OPTION_END \
-          }; \
-          ret =  GNUNET_PROGRAM_run (GNUNET_OS_project_data_gnunet (), \
-                                     argc,                             \
-                                     argv, \
-                                     daemon_name, \
-                                     daemon_help, \
-                                     options, \
-                                     init_cb, \
-                                     NULL); \
-          return ret; \
-        }
+
+#define GNUNET_DAEMON_MAIN(daemon_id, daemon_name, daemon_help, init_cb)     \
+  int main(int argc, char *const *argv)                                      \
+  {                                                                          \
+    int ret;                                                                 \
+    struct GNUNET_GETOPT_CommandLineOption options[] = {                    \
+      GNUNET_GETOPT_OPTION_END                                               \
+    };                                                                       \
+    ret = GNUNET_PROGRAM_run(GNUNET_OS_project_data_gnunet(),               \
+                             argc,                                           \
+                             argv,                                           \
+                             daemon_name,                                    \
+                             daemon_help,                                    \
+                             options,                                        \
+                             init_cb,                                        \
+                             NULL);                                          \
+    return ret;                                                              \
+  }
+
 #else
-#define GNUNET_DAEMON_MAIN(daemon_name, daemon_help, init_cb)  \
-        int init (void);                                       \
-        int __attribute__ ((constructor)) \
-        init (void) \
-        { \
-          return GNUNET_DAEMON_register (daemon_name, \
-                                         daemon_help, \
-                                         init_cb); \
-        }
+
+#define GNUNET_DAEMON_MAIN(daemon_id, daemon_name, daemon_help, init_cb)     \
+  static int init_##daemon_id(void);                                         \
+  int __attribute__((constructor)) init_##daemon_id(void)                    \
+  {                                                                          \
+    return GNUNET_DAEMON_register(daemon_name,                               \
+                                  daemon_help,                               \
+                                  init_cb);                                  \
+  }
+
 #endif
 
 

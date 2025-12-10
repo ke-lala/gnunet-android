@@ -321,6 +321,15 @@ GNUNET_OS_project_data_gnunet (void);
 
 
 /**
+ * Setting project data used by 'libgnunetutil' for GNUnet.
+ *
+ * @param project_data data to set instead of default.
+ */
+void
+GNUNET_OS_project_data_gnunet_set (const struct GNUNET_OS_ProjectData *project_data);
+
+
+/**
  * Setup OS subsystem for the given project data and package.
  * Initializes GNU Gettext.
  *

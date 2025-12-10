@@ -1,6 +1,6 @@
 /*
      This file is part of GNUnet.
-     Copyright (C) 2006, 2008, 2009, 2018 GNUnet e.V.
+     Copyright (C) 2006, 2008, 2009, 2018, 2024 GNUnet e.V.
 
      GNUnet is free software: you can redistribute it and/or modify it
      under the terms of the GNU Affero General Public License as published
@@ -35,7 +35,7 @@
 #ifndef GNUNET_CONFIGURATION_LIB_H
 #define GNUNET_CONFIGURATION_LIB_H
 
-
+#include "gnunet_os_lib.h"
 #include "gnunet_time_lib.h"
 
 #ifdef __cplusplus
@@ -53,10 +53,12 @@ struct GNUNET_CONFIGURATION_Handle;
 
 /**
  * Create a new configuration object.
+ *
+ * @param pd project data to use to determine paths
  * @return fresh configuration object
  */
 struct GNUNET_CONFIGURATION_Handle *
-GNUNET_CONFIGURATION_create (void);
+GNUNET_CONFIGURATION_create (const struct GNUNET_OS_ProjectData *pd);
 
 
 /**
@@ -85,7 +87,7 @@ GNUNET_CONFIGURATION_destroy (
  * defaults and then parse the specific configuration file
  * to overwrite the defaults.
  *
- * @param cfg configuration to update
+ * @param[in,out] cfg configuration to update
  * @param filename name of the configuration file, NULL to load defaults
  * @return #GNUNET_OK on success, #GNUNET_SYSERR on error
  */
@@ -110,27 +112,17 @@ GNUNET_CONFIGURATION_load_from (
 
 
 /**
- * Return GNUnet's default configuration.  A new configuration is allocated
- * each time and it's up to the caller to destroy it when done.  This function
- * returns GNUnet's configuration even when #GNUNET_OS_init has been called
- * with a value different from #GNUNET_OS_project_data_default.
- *
- * @return a freshly allocated configuration
- */
-struct GNUNET_CONFIGURATION_Handle *
-GNUNET_CONFIGURATION_default (void);
-
-
-/**
  * Return the filename of the default configuration filename
  * that is used when no explicit configuration entry point
  * has been specified.
  *
+ * @param pd project data to use to determine paths
  * @returns NULL if no default configuration file can be located,
  *          a newly allocated string otherwise
  */
 char *
-GNUNET_CONFIGURATION_default_filename (void);
+GNUNET_CONFIGURATION_default_filename (
+  const struct GNUNET_OS_ProjectData *pd);
 
 
 /**
@@ -264,6 +256,7 @@ typedef enum GNUNET_GenericReturnValue
  * @a cb with the resulting configuration object. Then free the
  * configuration object and return the status value from @a cb.
  *
+ * @param pd project data to use to determine paths
  * @param filename configuration to parse, NULL for "default"
  * @param cb function to run
  * @param cb_cls closure for @a cb
@@ -272,6 +265,7 @@ typedef enum GNUNET_GenericReturnValue
  */
 enum GNUNET_GenericReturnValue
 GNUNET_CONFIGURATION_parse_and_run (
+  const struct GNUNET_OS_ProjectData *pd,
   const char *filename,
   GNUNET_CONFIGURATION_Callback cb,
   void *cb_cls);
@@ -285,6 +279,17 @@ GNUNET_CONFIGURATION_parse_and_run (
 void
 GNUNET_CONFIGURATION_enable_diagnostics (
   struct GNUNET_CONFIGURATION_Handle *cfg);
+
+
+/**
+ * Return the project data associated with this configuration.
+ *
+ * @param cfg a configuration
+ * @return associated project data, never NULL
+ */
+const struct GNUNET_OS_ProjectData *
+GNUNET_CONFIGURATION_get_project_data (
+  const struct GNUNET_CONFIGURATION_Handle *cfg);
 
 
 /**
@@ -360,7 +365,9 @@ GNUNET_CONFIGURATION_remove_section (
  * @param section section of interest
  * @param option option of interest
  * @param number where to store the numeric value of the option
- * @return #GNUNET_OK on success, #GNUNET_SYSERR on error
+ * @return #GNUNET_OK on success,
+ *         #GNUNET_NO if option is not set
+ *         #GNUNET_SYSERR on error (value is malformed)
  */
 enum GNUNET_GenericReturnValue
 GNUNET_CONFIGURATION_get_value_number (
@@ -369,6 +376,20 @@ GNUNET_CONFIGURATION_get_value_number (
   const char *option,
   unsigned long long *number);
 
+/**
+ * Set a configuration value that should be a float.
+ * Note that this possibly truncates your float value.
+ *
+ * @param cfg configuration to update
+ * @param section section of interest
+ * @param option option of interest
+ * @param number value to set
+ */
+void
+GNUNET_CONFIGURATION_set_value_float (struct GNUNET_CONFIGURATION_Handle *cfg,
+                                       const char *section,
+                                       const char *option,
+                                       float number);
 
 /**
  * Get a configuration value that should be a floating point number.
@@ -377,7 +398,9 @@ GNUNET_CONFIGURATION_get_value_number (
  * @param section section of interest
  * @param option option of interest
  * @param number where to store the floating value of the option
- * @return #GNUNET_OK on success, #GNUNET_SYSERR on error
+ * @return #GNUNET_OK on success,
+ *         #GNUNET_NO if option is not set
+ *         #GNUNET_SYSERR on error (value is malformed)
  */
 enum GNUNET_GenericReturnValue
 GNUNET_CONFIGURATION_get_value_float (
@@ -394,7 +417,9 @@ GNUNET_CONFIGURATION_get_value_float (
  * @param section section of interest
  * @param option option of interest
  * @param time set to the time value stored in the configuration
- * @return #GNUNET_OK on success, #GNUNET_SYSERR on error
+ * @return #GNUNET_OK on success,
+ *         #GNUNET_NO if option is not set
+ *         #GNUNET_SYSERR on error (value is malformed)
  */
 enum GNUNET_GenericReturnValue
 GNUNET_CONFIGURATION_get_value_time (
@@ -411,7 +436,9 @@ GNUNET_CONFIGURATION_get_value_time (
  * @param section section of interest
  * @param option option of interest
  * @param size set to the size in bytes as stored in the configuration
- * @return #GNUNET_OK on success, #GNUNET_SYSERR on error
+ * @return #GNUNET_OK on success,
+ *         #GNUNET_NO if option is not set
+ *         #GNUNET_SYSERR on error (value is malformed)
  */
 enum GNUNET_GenericReturnValue
 GNUNET_CONFIGURATION_get_value_size (
@@ -443,7 +470,9 @@ GNUNET_CONFIGURATION_have_value (const struct GNUNET_CONFIGURATION_Handle *cfg,
  * @param option option of interest
  * @param value will be set to a freshly allocated configuration
  *        value, or NULL if option is not specified
- * @return #GNUNET_OK on success, #GNUNET_SYSERR on error
+ * @return #GNUNET_OK on success,
+ *         #GNUNET_NO if option is not set
+ *         #GNUNET_SYSERR on error (value is malformed)
  */
 enum GNUNET_GenericReturnValue
 GNUNET_CONFIGURATION_get_value_string (
@@ -462,7 +491,9 @@ GNUNET_CONFIGURATION_get_value_string (
  * @param option option of interest
  * @param value will be set to a freshly allocated configuration
  *        value, or NULL if option is not specified
- * @return #GNUNET_OK on success, #GNUNET_SYSERR on error
+ * @return #GNUNET_OK on success,
+ *         #GNUNET_NO if option is not set
+ *         #GNUNET_SYSERR on error (value is malformed)
  */
 enum GNUNET_GenericReturnValue
 GNUNET_CONFIGURATION_get_value_filename (
@@ -517,7 +548,9 @@ GNUNET_CONFIGURATION_iterate_section_values (
  * @param choices NULL-terminated list of legal values
  * @param value will be set to an entry in the legal list,
  *        or NULL if option is not specified and no default given
- * @return #GNUNET_OK on success, #GNUNET_SYSERR on error
+ * @return #GNUNET_OK on success,
+ *         #GNUNET_NO if option is not set
+ *         #GNUNET_SYSERR on error (value not in @a choices)
  */
 enum GNUNET_GenericReturnValue
 GNUNET_CONFIGURATION_get_value_choice (
@@ -535,7 +568,9 @@ GNUNET_CONFIGURATION_get_value_choice (
  * @param cfg configuration to inspect
  * @param section section of interest
  * @param option option of interest
- * @return #GNUNET_YES, #GNUNET_NO or if option has no valid value, #GNUNET_SYSERR
+ * @return #GNUNET_OK if option is set to "YES"
+ *         #GNUNET_NO if option is not set or "NO"
+ *         #GNUNET_SYSERR on error (neither YES nor NO)
  */
 enum GNUNET_GenericReturnValue
 GNUNET_CONFIGURATION_get_value_yesno (
@@ -595,10 +630,11 @@ GNUNET_CONFIGURATION_expand_dollar (
  * @param number value to set
  */
 void
-GNUNET_CONFIGURATION_set_value_number (struct GNUNET_CONFIGURATION_Handle *cfg,
-                                       const char *section,
-                                       const char *option,
-                                       unsigned long long number);
+GNUNET_CONFIGURATION_set_value_number (
+  struct GNUNET_CONFIGURATION_Handle *cfg,
+  const char *section,
+  const char *option,
+  unsigned long long number);
 
 
 /**

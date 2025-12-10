@@ -85,7 +85,7 @@ struct GNUNET_IDENTITY_Operation;
  * @param ego the ego
  * @return associated ECC key, valid as long as the ego is valid
  */
-const struct GNUNET_CRYPTO_PrivateKey *
+const struct GNUNET_CRYPTO_BlindablePrivateKey *
 GNUNET_IDENTITY_ego_get_private_key (const struct GNUNET_IDENTITY_Ego *ego);
 
 
@@ -106,7 +106,8 @@ GNUNET_IDENTITY_ego_get_anonymous (void);
  */
 void
 GNUNET_IDENTITY_ego_get_public_key (struct GNUNET_IDENTITY_Ego *ego,
-                                    struct GNUNET_CRYPTO_PublicKey *pk);
+                                    struct GNUNET_CRYPTO_BlindablePublicKey *pk)
+;
 
 
 /**
@@ -174,22 +175,6 @@ GNUNET_IDENTITY_connect (const struct GNUNET_CONFIGURATION_Handle *cfg,
 
 
 /**
- * Obtain the ego that is currently preferred/default for a service.
- *
- * @param id identity service to query
- * @param service_name for which service is an identity wanted
- * @param cb function to call with the result (will only be called once)
- * @param cb_cls closure for @a cb
- * @return handle to abort the operation
- */
-struct GNUNET_IDENTITY_Operation *
-GNUNET_IDENTITY_get (struct GNUNET_IDENTITY_Handle *id,
-                     const char *service_name,
-                     GNUNET_IDENTITY_Callback cb,
-                     void *cb_cls);
-
-
-/**
  * Function called once the requested operation has
  * been completed.
  *
@@ -199,24 +184,6 @@ GNUNET_IDENTITY_get (struct GNUNET_IDENTITY_Handle *id,
 typedef void
 (*GNUNET_IDENTITY_Continuation) (void *cls,
                                  enum GNUNET_ErrorCode ec);
-
-
-/**
- * Set the preferred/default ego for a service.
- *
- * @param id identity service to inform
- * @param service_name for which service is an identity set
- * @param ego new default identity to be set for this service
- * @param cont function to call once the operation finished
- * @param cont_cls closure for @a cont
- * @return handle to abort the operation
- */
-struct GNUNET_IDENTITY_Operation *
-GNUNET_IDENTITY_set (struct GNUNET_IDENTITY_Handle *id,
-                     const char *service_name,
-                     struct GNUNET_IDENTITY_Ego *ego,
-                     GNUNET_IDENTITY_Continuation cont,
-                     void *cont_cls);
 
 
 /**
@@ -239,7 +206,7 @@ GNUNET_IDENTITY_disconnect (struct GNUNET_IDENTITY_Handle *h);
 typedef void
 (*GNUNET_IDENTITY_CreateContinuation) (
   void *cls,
-  const struct GNUNET_CRYPTO_PrivateKey *pk,
+  const struct GNUNET_CRYPTO_BlindablePrivateKey *pk,
   enum GNUNET_ErrorCode ec);
 
 
@@ -257,7 +224,7 @@ typedef void
 struct GNUNET_IDENTITY_Operation *
 GNUNET_IDENTITY_create (struct GNUNET_IDENTITY_Handle *id,
                         const char *name,
-                        const struct GNUNET_CRYPTO_PrivateKey *privkey,
+                        const struct GNUNET_CRYPTO_BlindablePrivateKey *privkey,
                         enum GNUNET_CRYPTO_KeyType ktype,
                         GNUNET_IDENTITY_CreateContinuation cont,
                         void *cont_cls);
@@ -361,7 +328,7 @@ GNUNET_IDENTITY_ego_lookup_cancel (struct GNUNET_IDENTITY_EgoLookup *el);
 typedef void
 (*GNUNET_IDENTITY_EgoSuffixCallback) (
   void *cls,
-  const struct GNUNET_CRYPTO_PrivateKey *priv,
+  const struct GNUNET_CRYPTO_BlindablePrivateKey *priv,
   const char *ego_name);
 
 

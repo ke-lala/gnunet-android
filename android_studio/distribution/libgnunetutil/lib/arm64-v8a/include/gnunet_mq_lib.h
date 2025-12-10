@@ -38,8 +38,6 @@
  * @defgroup mq  MQ library
  * General-purpose message queue
  *
- * @see [Documentation](https://gnunet.org/message-queue-api)
- *
  * @{
  */
 #ifndef GNUNET_MQ_LIB_H
@@ -396,7 +394,7 @@ typedef void
  * is used with DLLs defined outside of the MQ module.  This
  * is just in case some application needs to also manage a
  * FIFO of envelopes independent of MQ itself and wants to
- * re-use the pointers internal to @a env.  Use with caution.
+ * reuse the pointers internal to @a env.  Use with caution.
  *
  * @param[in,out] env_head of envelope DLL
  * @param[in,out] env_tail tail of envelope DLL
@@ -414,7 +412,7 @@ GNUNET_MQ_dll_insert_head (struct GNUNET_MQ_Envelope **env_head,
  * is used with DLLs defined outside of the MQ module.  This
  * is just in case some application needs to also manage a
  * FIFO of envelopes independent of MQ itself and wants to
- * re-use the pointers internal to @a env.  Use with caution.
+ * reuse the pointers internal to @a env.  Use with caution.
  *
  * @param[in,out] env_head of envelope DLL
  * @param[in,out] env_tail tail of envelope DLL
@@ -432,7 +430,7 @@ GNUNET_MQ_dll_insert_tail (struct GNUNET_MQ_Envelope **env_head,
  * is used with DLLs defined outside of the MQ module. This
  * is just in case some application needs to also manage a
  * FIFO of envelopes independent of MQ itself and wants to
- * re-use the pointers internal to @a env.  Use with caution.
+ * reuse the pointers internal to @a env.  Use with caution.
  *
  * @param[in,out] env_head of envelope DLL
  * @param[in,out] env_tail tail of envelope DLL

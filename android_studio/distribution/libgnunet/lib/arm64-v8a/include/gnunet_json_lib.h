@@ -273,7 +273,7 @@ GNUNET_JSON_spec_json (const char *name,
 
 
 /**
- * JSON object, reference counter not incremented.
+ * JSON object, reference counter incremented.
  *
  * @param name name of the JSON field
  * @param[out] jsonp where to store the JSON found under @a name
@@ -284,7 +284,7 @@ GNUNET_JSON_spec_object_copy (const char *name,
 
 
 /**
- * JSON array, reference counter not incremented.
+ * JSON array, reference counter incremented.
  *
  * @param name name of the JSON field
  * @param[out] jsonp where to store the JSON found under @a name
@@ -921,6 +921,32 @@ GNUNET_JSON_pack_data64_varsize (const char *name,
  */
 #define GNUNET_JSON_pack_data64_auto(name,blob) \
         GNUNET_JSON_pack_data64_varsize (name, (blob), sizeof (*(blob)))
+
+
+/**
+ * Generate packer instruction of a time rounder interval.
+ *
+ * @param name name of the field to add to the object
+ * @param ri rounder interval to add
+ * @return json pack specification
+ */
+struct GNUNET_JSON_PackSpec
+GNUNET_JSON_pack_time_rounder_interval (const char *name,
+                                        enum GNUNET_TIME_RounderInterval ri);
+
+
+/**
+ * Provide specification to parse a time rounder interval.
+ * The value must be provided as a descriptive string.
+ *
+ * @param name name of the time rounder interval type in the JSON
+ * @param[out] ri where to store the time rounder interval
+ * @return spec for parsing trigger event type
+ */
+struct GNUNET_JSON_Specification
+GNUNET_JSON_spec_time_rounder_interval (
+  const char *name,
+  enum GNUNET_TIME_RounderInterval *ri);
 
 
 /**
