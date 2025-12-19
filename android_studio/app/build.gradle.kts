@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace = "org.gnu.gnunet"
-    compileSdk = 35
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "org.gnu.gnunet"
-        minSdk = 31
-        targetSdk = 35
+        minSdk = 29
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
@@ -44,6 +44,7 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        aidl = true
     }
 }
 
@@ -56,4 +57,6 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    implementation("org.gnunet:gnunet-ipc-contract:1.0.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
 }
