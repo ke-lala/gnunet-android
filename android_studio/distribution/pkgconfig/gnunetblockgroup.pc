@@ -1,11 +1,11 @@
-prefix=/home/user/AndroidStudioProjects/gnunet-android/android_studio/distribution/libgnunet/lib/arm64-v8a
+prefix=/home/user/ndk-sysroot/arm64-v8a/gnunet
 includedir=${prefix}/include
-libdir=${prefix}
+libdir=${prefix}/lib
 
 Name: gnunetblockgroup
 Description: Library for data block manipulation
 URL: https://www.gnunet.org
-Version: 0.24.1-19-gf8d2003a0
+Version: show
 Requires.private: gnunetutil, gnunetblock, libgcrypt, libsodium >= 1.0.18
-Libs: -L${prefix} -lgnunetblockgroup
+Libs: -L${prefix}/lib -lgnunetblockgroup
 Cflags: -I${includedir}
